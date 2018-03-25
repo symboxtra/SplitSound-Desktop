@@ -1,0 +1,22 @@
+steps:
+
+- task: NuGetToolInstaller@0
+  displayName: Use NuGet 4.4.1
+  inputs:
+    versionSpec: 4.4.1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(Parameters.solution)'
+
+- task: CMake@1
+  displayName: Generate build files
+  inputs:
+    workingDirectory: build
+    cmakeArgs: '../'
+
+- task: CMake@1
+  displayName: Build solution
+  inputs:
+    workingDirectory: build
+    cmakeArgs: '--build build --target ALL_BUILD --config Release'
