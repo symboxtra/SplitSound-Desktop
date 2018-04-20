@@ -7,13 +7,6 @@ environment:
       COMPILER: msvc
       VSVER: 14
 
-notifications:
-    - provider: Webhook
-      url: https://discordapp.com/api/webhooks/436971095208230922/De0x0wc8iZ6WzMMTzyWn7doVC9RhFzimCB4VwLUzqAhEXxBkIqb0B-qlyRdqOQMQ-88f
-      method: POST
-      on_build_success: true
-      on_build_failure: true
-      on_build_status_changed: true
 clone_depth: 1
 
 init:
@@ -26,3 +19,10 @@ build_script:
     - ps: $env:QTDIR = "C:\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5"
     - ps: .\test.ps1
 
+on_success:
+    - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+    - ps: ./send.ps1 success $env:WEBHOOK_URL # Discord Webhook
+
+on_failure:
+    - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+    - ps: ./send.ps1 failure $env:WEBHOOK_URL # Discord Webhook
