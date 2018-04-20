@@ -1,3 +1,6 @@
 [submodule "googletest"]
 	path = googletest
 	url = https://github.com/symboxtra/googletest
+[submodule "src/libs/googletest"]
+	path = src/libs/googletest
+	url = https://github.com/symboxtra/googletest
