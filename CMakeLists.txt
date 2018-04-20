@@ -36,16 +36,29 @@ if (NOT COMMAND_LINE_BUILD)
 	set (CMAKE_AUTOMOC ON)
 	set (CMAKE_AUTOUIC ON)
 
-	# Find Qt (check CMake flags first, then environment variable)
-	if (NOT DEFINED Qt5_DIR)
-		if (NOT DEFINED ENV{QTDIR})
-			MESSAGE(FATAL_ERROR "QTDIR environment variable not set. Be sure to set the QTDIR cmake cache variable to the Qt root install location.")
+	if (WIN32)
+		# Find Qt on Windows (check CMake flags first, then environment variable)
+		if (NOT DEFINED Qt5_DIR)
+			if (NOT DEFINED ENV{QTDIR})
+				MESSAGE(FATAL_ERROR "QTDIR environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQt5_DIR=C:\\path\\to\\Qt.")
+			endif ()
 		endif ()
-	endif ()
 
-	# Cache and print Qt location
-	set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Qt install path")
-	MESSAGE(STATUS "Qt5_DIR: " ${Qt5_DIR})
+		# Cache and print Qt location
+		set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Qt install path")
+		MESSAGE(STATUS "Qt5_DIR: " ${Qt5_DIR})
+		
+		# Macro for lower level CMakeLists to copy DLLs
+		macro (qt5_copy_dll APP DLL)
+			# find the release *.dll file
+			get_target_property(Qt5_${DLL}Location Qt5::${DLL} LOCATION)
+			# find the debug *d.dll file
+			get_target_property(Qt5_${DLL}LocationDebug Qt5::${DLL} IMPORTED_LOCATION_DEBUG)
+
+			add_custom_command(TARGET ${APP} POST_BUILD
+			   COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>)
+		endmacro ()
+	endif ()
 
 	# Required Qt packages
 	find_package(Qt5 REQUIRED
@@ -53,17 +66,6 @@ if (NOT COMMAND_LINE_BUILD)
 		Widgets
 		Gui
 	)
-
-	# Macro for lower level CMakeLists to copy DLLs
-	macro (qt5_copy_dll APP DLL)
-		# find the release *.dll file
-		get_target_property(Qt5_${DLL}Location Qt5::${DLL} LOCATION)
-		# find the debug *d.dll file
-		get_target_property(Qt5_${DLL}LocationDebug Qt5::${DLL} IMPORTED_LOCATION_DEBUG)
-
-		add_custom_command(TARGET ${APP} POST_BUILD
-		   COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>)
-	endmacro ()
 	
 	add_subdirectory(src/helloworld)
 	
