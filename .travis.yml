@@ -1,0 +1,34 @@
+language: cpp
+os: osx
+osx_image: xcode9.2
+
+git:
+    depth: 5 # Limit unneeded commit depth
+    submodules: false
+
+before_install:
+    - set -o pipefail # Prevent xcpretty from eating xcodebuild's exit code
+    - git submodule update --init --recursive
+
+install:
+    - brew update
+    - brew install qt
+    - PATH=/usr/local/opt/qt/bin:${PATH}
+
+before_script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - cd ..
+
+script:
+    - ./test.sh
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports" # Collect coverage data
+    - curl https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh > send.sh && chmod +x send.sh
+    - ./send.sh success $WEBHOOK_URL # Webhook to Discord
+
+after_failure:
+    - curl https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh > send.sh && chmod +x send.sh
+    - ./send.sh failure $WEBHOOK_URL # Webhook to Discord

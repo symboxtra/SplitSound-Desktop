@@ -6,17 +6,18 @@ steps:
     versionSpec: 4.4.1
 
 - task: NuGetCommand@2
+  displayName: NuGet Restore
   inputs:
     restoreSolution: '$(Parameters.solution)'
 
 - task: CMake@1
-  displayName: Generate build files
+  displayName: Generate Build Files
   inputs:
     workingDirectory: build
     cmakeArgs: '../'
 
 - task: CMake@1
-  displayName: Build solution
+  displayName: Build Solution
   inputs:
     workingDirectory: '$(Build.SourcesDirectory)'
     cmakeArgs: '--build build --target ALL_BUILD --config Release'
