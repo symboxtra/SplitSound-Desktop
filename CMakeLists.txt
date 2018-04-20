@@ -93,7 +93,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	)
 	
 	# Collect all test source files
-	file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/src/test/basic/*.cpp)
+	file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/src/test/*/*.cpp)
 	
 	# Move test executables to bin/test
 	set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/test)
