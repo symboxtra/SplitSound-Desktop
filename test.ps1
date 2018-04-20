@@ -1,6 +1,6 @@
 #########################################################
 #                                                       #
-#		Build QT for Windows using MSVC compiler		#
+#   Build and Test QT for Windows using MSVC compiler   #
 #                                                       #
 #########################################################
 
@@ -25,3 +25,7 @@ Write-Host "===== Building CMake... =====" -Foreground Yellow
 ""
 cmake --build .
 if ($LastExitCode -ne 0) {$host.SetShouldExit($LastExitCode)}
+
+# Tests using googletest suite:w
+ctest -C Debug -V
+if ($LastExitCode -ne 0) {$host.SetShouldExit($LastExitCode)} # Exit with test error code
