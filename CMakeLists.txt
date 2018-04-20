@@ -16,6 +16,9 @@ if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE Debug)
 endif ()
 
+# Ensure libraries are installed correctly on all platforms
+# include(GNUInstallDirs)
+
 # Set output for binaries
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -25,7 +28,7 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
     set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib)
     set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib) # TODO: ?
-endforeach (OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
+endforeach ()
 
 # GUI/non-GUI build
 option (COMMAND_LINE_BUILD "Compile for command line use only (no GUI)" OFF)
@@ -73,6 +76,39 @@ endif ()
 
 # Build settings for DEBUG builds only
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    enable_testing()
+	# Prevent overriding compiler/linker options
+	if (WIN32)
+		set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+	endif ()
+	
+	# Enable testing and build googletest submodule
+	enable_testing()
     add_subdirectory(src/libs/googletest)
+	
+	# Include directories needed for testing
+	include_directories(
+		${PROJECT_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
+		${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
+		${PROJECT_SOURCE_DIR}/src/helloworld/src
+	)
+	
+	# Collect all test source files
+	file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/src/test/*/*.cpp)
+	
+	# Move test executables to bin/test
+	set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/test)
+	foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+		string (TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
+		set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin/test)
+	endforeach ()
+
+	# Create executables and CTest for each file
+	foreach(_test_file ${TEST_SRC_FILES})
+		get_filename_component(_test_name ${_test_file} NAME_WE)
+		add_executable(${_test_name} ${_test_file})
+		target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+		add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
+		set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
+	endforeach()
+	
 endif ()

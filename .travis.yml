@@ -3,11 +3,11 @@ os: osx
 osx_image: xcode9.2
 
 git:
-    depth: 5 # Limit unneeded commit depth
+    depth: 1 # Limit unneeded commit depth
     submodules: false
 
 before_install:
-    - set -o pipefail # Prevent xcpretty from eating xcodebuild's exit code
+    - set -o pipefail
     - git submodule update --init --recursive
 
 install:

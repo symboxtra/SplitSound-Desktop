@@ -9,7 +9,7 @@ if (WIN32)
 	
 else ()
 
-	add_executable(hello-world src/test.cpp)
+	add_executable(hello-world src/Test.cpp)
 	
 endif ()
 
