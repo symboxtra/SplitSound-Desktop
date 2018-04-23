@@ -6,6 +6,10 @@ environment:
       PLATFORM: amd64
       COMPILER: msvc
       VSVER: 14
+    WEBHOOK_URL:
+      secure: xy3jJldR20n3fT4ekICPX5cetYvwW3pt1NnAfCrdD/Dxc4Xqz9vfwdtPNTFb28AFch8TyYWJva739YOFArmdBlHk8JmLqzQUrNom5VHpEdCcllpyvbroTlhE9Ah8BURvai5VhzsI9pmG4jItOXbeqIw1zRJNdqQxiK2/YOaD+RY=
+    CODECOV_TOKEN:
+      secure: eNc7TqI1d2bL+bIFGGUdK8Utwepy9RIwIi3jikaMPlbCjOrgZHFZLz+eL61mP0mB
 
 clone_depth: 1
 
@@ -18,15 +22,25 @@ install:
     - ps: python -m pip install --upgrade pip
     - ps: python -m pip install codecov
 
+before_build:
+    - ps: |
+        mkdir build > $null
+        cd build
+        ""
+        Write-Host "===== Generating CMake... =====" -Foreground Yellow
+        ""
+        cmake .. -A x64 -DQt5_DIR=C:\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5
+        if($LastExitCode -ne 0){$host.SetShouldExit($LastExitCode)}
+        cd ..
+
 build_script:
-    - ps: $env:QTDIR = "C:\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5"
     - ps: .\test.ps1
 
 on_success:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-    - ps: ./send.ps1 success $env:WEBHOOK_URL # Discord Webhook
-    - ps: codecov --root .. --disable gcov -f cobertura.xml -t $env:CODECOV_TOKEN
+    - ps: if ($env:WEBHOOK_URL.length -ne 0) { ./send.ps1 success $env:WEBHOOK_URL } else { Write-Host "WEBHOOK_URL inaccessible." } # Send Discord Webhook only when secure env vars can be decrypted
+    - ps: if ($env:CODECOV_TOKEN.length -ne 0) { codecov --root . --disable gcov -f build\cobertura.xml -t $env:CODECOV_TOKEN } else { Write-Host "CODECOV_TOKEN inaccessible." } # ^^
 
 on_failure:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-    - ps: ./send.ps1 failure $env:WEBHOOK_URL # Discord Webhook
+    - ps: if ($env:WEBHOOK_URL.length -ne 0) { ./send.ps1 failure $env:WEBHOOK_URL } # Send Discord Webhook only when secure env vars can be decrypted
