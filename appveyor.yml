@@ -25,7 +25,7 @@ on_success:
     - ps: ./send.ps1 success $env:WEBHOOK_URL # Discord Webhook
     - ps: |
         Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-        bash codecov.sh -f "cobertura.xml"
+        bash "codecov.sh" -f "cobertura.xml"
 
 on_failure:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1

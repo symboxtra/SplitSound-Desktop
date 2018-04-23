@@ -1,6 +1,12 @@
+#########################################################
+#                                                       #
+#     Download OpenCppCoverage to generate reports      #
+#                                                       #
+#########################################################
+
+
 # Downloads are done from the oficial github release page links
 $downloadUrl = "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.6.1/OpenCppCoverageSetup-x64-0.9.6.1.exe"
-#$installerPath = [System.IO.Path]::Combine($Env:USERPROFILE, "Downloads", "OpenCppCoverageSetup.exe")
 $installerPath = "./OpenCppCoverageSetup.exe"
 ""
 
@@ -8,7 +14,7 @@ $installerPath = "./OpenCppCoverageSetup.exe"
 if(-Not (Test-Path $installerPath)) {
     Write-Host "Downloading OpenCppCoverage from: " -Foreground Cyan -NoNewline
 	Write-Host $downloadUrl -Foreground White
-    #Start-FileDownload $downloadUrl -FileName $installerPath
+	
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	Invoke-WebRequest -Uri $downloadUrl -OutFile $installerPath
 }

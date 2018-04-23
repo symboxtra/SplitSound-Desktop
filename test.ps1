@@ -37,5 +37,5 @@ if ($LastExitCode -ne 0) {$host.SetShouldExit($LastExitCode)} # Exit with test e
 ""
 Write-Host "===== Generating Coverage Report... =====" -Foreground Yellow
 ""
-OpenCppCoverage --export_type=cobertura:cobertura.xml (get-item .\bin\test\*.exe)
+OpenCppCoverage --export_type=cobertura:cobertura.xml (get-item .\bin\test\*.exe)>$null
 if($LastExitCode -ne 0) {$host.SetShouldExit($LastExitCode)} # Exit with test error code
