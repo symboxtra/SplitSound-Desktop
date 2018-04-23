@@ -6,6 +6,10 @@ environment:
       PLATFORM: amd64
       COMPILER: msvc
       VSVER: 14
+    WEBHOOK_URL:
+      secure: Exy7n5zWBkYknrvXF14ZF5ScCpEZTGDnGMwW7rh5xGQdnyEuE2i7yjngmgty9AbxcXn7zKBOa1s3J+JSmpbviBRs8Ry4I+CfRyNH1ojtfHT1Bqb+DMcku83VuVSneN5bCqbWtvRINXe2VU7EcC61Vy0TQD/ML+ugoOa/huWVj2s=
+    CODECOV_TOKEN:
+      secure: uzdKXr9nPEGQi8hfQxShwSMKkQicUmjs/5n1dWj9j6Drr8X/wuawzaVYQeqdxBPB
 
 clone_depth: 1
 
