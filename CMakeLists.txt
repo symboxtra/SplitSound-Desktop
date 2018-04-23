@@ -19,8 +19,11 @@ endif ()
 # Ensure libraries are installed correctly on all platforms
 # include(GNUInstallDirs)
 
-# Set C++ compiler flags for GCOV report
-set (CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+# Set flags only for GCC compiler
+if(NOT WIN32)
+	# Set C++ compiler flags for GCOV report
+	set (CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+endif()
 
 # Set output for binaries
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -84,15 +87,21 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 	endif ()	
 
-	# Temporarily disable GCOV flags
-	set (CMAKE_CXX_FLAGS "")
+	# Change flags only for GCC compiler
+	if(NOT WIN32)
+		# Temporarily disable GCOV flags
+		set (CMAKE_CXX_FLAGS "")
+	endif()
 
 	# Enable testing and build googletest submodule
 	enable_testing()
     add_subdirectory(src/libs/googletest)
 
-	# Re-enable GCOV flags
-	set (CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+	# Change flags only for gcc compiler
+	if(NOT WIN32)
+		# Re-enable GCOV flags
+		set (CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+	endif()
 
 	# Include directories needed for testing
 	include_directories(
