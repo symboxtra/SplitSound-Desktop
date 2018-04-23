@@ -33,5 +33,5 @@ $installPath = [System.IO.Path]::Combine(${Env:ProgramFiles}, "OpenCppCoverage")
 $env:Path="$env:Path;$installPath"
 
 # Inform user installation has completed
-Write-Host "Installation Complete" -Foreground Green
+Write-Host "Installation Complete." -Foreground Green
 ""

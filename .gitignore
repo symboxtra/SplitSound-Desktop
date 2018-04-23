@@ -1,6 +1,7 @@
 # Ignore locally compiled builds and libraries
 build*/
 local*/
+OpenCppCoverageSetup.exe
 
 .*.swp
 
