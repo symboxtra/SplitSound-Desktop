@@ -22,6 +22,16 @@ install:
     - ps: python -m pip install --upgrade pip
     - ps: python -m pip install codecov
 
+before_build:
+    - ps: |
+        mkdir build > $null
+        cd build
+        ""
+        Write-Host "===== Generating CMake... =====" -Foreground Yellow
+        ""
+        cmake .. -A x64
+        if($LastExitCode -ne 0){$host.SetShouldExit($LastExitCode)}
+
 build_script:
     - ps: $env:QTDIR = "C:\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5"
     - ps: .\test.ps1
