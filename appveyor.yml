@@ -15,6 +15,7 @@ init:
 install:
     - git submodule update --init --recursive
     - ps: .\installOpenCppCoverage.ps1
+    - ps: python -m pip install codecov
 
 build_script:
     - ps: $env:QTDIR = "C:\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5"
@@ -23,9 +24,7 @@ build_script:
 on_success:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
     - ps: ./send.ps1 success $env:WEBHOOK_URL # Discord Webhook
-    - ps: |
-        Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-        bash "codecov.sh" -f "cobertura.xml" -t $env:CODECOV_TOKEN
+    - ps: codecov --root .. --disable gcov -f cobertura.xml -t $env:CODECOV_TOKEN
 
 on_failure:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
