@@ -4,6 +4,8 @@
 #                                                       #
 #########################################################
 
+cd .\build\
+
 # Generate executable using CMake
 ""
 Write-Host "===== Building... =====" -Foreground Yellow
@@ -25,3 +27,5 @@ if($LastExitCode -ne 0) {$host.SetShouldExit($LastExitCode)} # Exit with test er
 
 Write-Host "Coverage Report generated." -Foreground Green
 ""
+
+cd ..
