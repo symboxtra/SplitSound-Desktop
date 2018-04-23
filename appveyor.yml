@@ -7,9 +7,9 @@ environment:
       COMPILER: msvc
       VSVER: 14
     WEBHOOK_URL:
-      secure: Exy7n5zWBkYknrvXF14ZF5ScCpEZTGDnGMwW7rh5xGQdnyEuE2i7yjngmgty9AbxcXn7zKBOa1s3J+JSmpbviBRs8Ry4I+CfRyNH1ojtfHT1Bqb+DMcku83VuVSneN5bCqbWtvRINXe2VU7EcC61Vy0TQD/ML+ugoOa/huWVj2s=
+      secure: xy3jJldR20n3fT4ekICPX5cetYvwW3pt1NnAfCrdD/Dxc4Xqz9vfwdtPNTFb28AFch8TyYWJva739YOFArmdBlHk8JmLqzQUrNom5VHpEdCcllpyvbroTlhE9Ah8BURvai5VhzsI9pmG4jItOXbeqIw1zRJNdqQxiK2/YOaD+RY=
     CODECOV_TOKEN:
-      secure: uzdKXr9nPEGQi8hfQxShwSMKkQicUmjs/5n1dWj9j6Drr8X/wuawzaVYQeqdxBPB
+      secure: eNc7TqI1d2bL+bIFGGUdK8Utwepy9RIwIi3jikaMPlbCjOrgZHFZLz+eL61mP0mB
 
 clone_depth: 1
 
