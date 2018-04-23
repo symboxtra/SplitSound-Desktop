@@ -28,9 +28,9 @@ build_script:
 
 on_success:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-    - ps: ./send.ps1 success $env:WEBHOOK_URL # Discord Webhook
-    - ps: codecov --root .. --disable gcov -f cobertura.xml -t $env:CODECOV_TOKEN
+    - ps: if ($env:WEBHOOK_URL.length -ne 0) { ./send.ps1 success $env:WEBHOOK_URL } # Send Discord Webhook only when secure env vars can be decrypted
+    - ps: if ($env:CODECOV_TOKEN.lenght -ne 0) { codecov --root .. --disable gcov -f cobertura.xml -t $env:CODECOV_TOKEN } # ^^
 
 on_failure:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-    - ps: ./send.ps1 failure $env:WEBHOOK_URL # Discord Webhook
+    - ps: if ($env:WEBHOOK_URL.length -ne 0) { ./send.ps1 failure $env:WEBHOOK_URL } # Send Discord Webhook only when secure env vars can be decrypted
