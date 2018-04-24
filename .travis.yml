@@ -17,9 +17,19 @@ before_install:
     - git submodule update --init --recursive
 
 install:
-    - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew update && brew install qt; fi
-    - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then PATH=/usr/local/opt/qt/bin:${PATH}; fi
-    - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then sudo apt update && sudo apt install qt5-default; fi
+    - |
+        if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+            brew update
+            brew install qt
+            brew install lcov
+            PATH=/usr/local/opt/qt/bin:${PATH}
+        fi
+    - |
+        if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+            sudo apt update
+            sudo apt install qt5-default
+            sudo apt install lcov 
+        fi
 
 before_script:
     - mkdir build
