@@ -91,7 +91,17 @@ find_package(Qt5 REQUIRED
     Gui
 )
 
+# Change flags only for gcc compiler
+set (CXX_FLAGS_NOCOV "${CMAKE_CXX_FLAGS}")
+if (CMAKE_BUILD_TYPE MATCHES "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	# Enable GCOV flags
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+
 add_subdirectory(src/helloworld)
+
+# Turn off coverage flags
+set (CMAKE_CXX_FLAGS "${CMAKE_FLAGS_NOCOV}")
 
 # Build settings for DEBUG builds only
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -135,15 +145,6 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
 		add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
 		set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
-
-		# Compile test files before running gcov
-#		add_dependencies(gcov ${_test_name})
 	endforeach()
-
-	# Clean gcov to prevent override
-	#add_custom_target(scrub
-	#	COMMAND rm -f ${OBJECT_DIR}
-	#)
-
 
 endif ()
