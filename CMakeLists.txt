@@ -40,7 +40,7 @@ message(STATUS "\nBuilding needed dependency JThread...\n")
 
 # Manually cmake and install JThread (required for JRTPLIB)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
 )
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
