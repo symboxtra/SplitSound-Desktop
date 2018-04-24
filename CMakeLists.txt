@@ -19,12 +19,6 @@ endif ()
 # Ensure libraries are installed correctly on all platforms
 # include(GNUInstallDirs)
 
-# Set flags only for GCC compiler
-if (NOT WIN32)
-	# Set C++ compiler flags for GCOV report
-	set (CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
-endif ()
-
 # Set output for binaries
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lib)
@@ -50,11 +44,12 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
 message(STATUS "\nBuilt and installed JThread.\nContinuing CMake generation...\n")
 
 # Prevent -Wunused-result from killing the Release build
-if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-result")
 endif()
 
 # Add JRTPLIB
+set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/lib)
 add_subdirectory(src/libs/jrtplib)
 include_directories(${CMAKE_BINARY_DIR}/src/libs/jrtplib/src) # Include generated headers
 
@@ -105,20 +100,14 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 	endif ()
 
-	# Change flags only for GCC compiler
-	if(NOT WIN32)
-		# Temporarily disable GCOV flags
-		set (CMAKE_CXX_FLAGS "")
-	endif()
-
 	# Enable testing and build googletest submodule
 	enable_testing()
     add_subdirectory(src/libs/googletest)
 
 	# Change flags only for gcc compiler
-	if(NOT WIN32)
-		# Re-enable GCOV flags
-		set (CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+	if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+		# Enable GCOV flags
+		set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 	endif()
 
 	# Include directories needed for testing
