@@ -77,6 +77,7 @@ if (NOT COMMAND_LINE_BUILD)
 	)
 	
 	add_subdirectory(src/helloworld)
+	add_subdirectory(src/net)
 	
 endif ()
 
