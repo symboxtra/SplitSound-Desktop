@@ -19,6 +19,12 @@ endif ()
 # Ensure libraries are installed correctly on all platforms
 # include(GNUInstallDirs)
 
+# Disable coverage flags by default
+option(SS_ADD_COVERAGE_FLAGS "Add coverage options to compiler flags" OFF)
+if (CMAKE_BUILD_TYPE MATCHES "Debug" AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+    set(SS_ADD_COVERAGE_FLAGS ON)
+endif ()
+
 # Set output for binaries
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lib)
@@ -93,8 +99,7 @@ find_package(Qt5 REQUIRED
 
 # Change flags only for gcc compiler
 set (CXX_FLAGS_NOCOV "${CMAKE_CXX_FLAGS}")
-if (CMAKE_BUILD_TYPE MATCHES "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	# Enable GCOV flags
+if (SS_ADD_COVERAGE_FLAGS)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
@@ -115,7 +120,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     add_subdirectory(src/libs/googletest)
 
 	# Change flags only for gcc compiler
-	if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	if (SS_ADD_COVERAGE_FLAGS)
 		# Enable GCOV flags
 		set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 	endif()
