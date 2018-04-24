@@ -10,8 +10,9 @@
 
 using namespace std;
 
-#ifdef __linux__
+#ifdef __unix__
 
+// Unix (GNU/Clang++) includes
 #include <errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -19,6 +20,7 @@ using namespace std;
 #include <unistd.h>
 #include <ifaddrs.h>
 
+/* Ping internet servers to recieve back IP of device */
 string getDeviceIP()
 {
 	const char* google_server = "8.8.8.8";
@@ -48,23 +50,23 @@ string getDeviceIP()
 	if(p != NULL)
 		ip = string(buffer);
 	else
-	{
 		ip = "ERROR";
-	}
+
 	close(sock);
 	return ip;
 }
 
-vector<pair<string, string>> getSubnetMask()
+/* Gets the IP address of all the network connections of local machine */
+vector<pair<string, string>> getIPSubnetList()
 {
+	// Create variables and structs for IP storage and system calls
 	vector<pair<string, string>> ipSubnetList;
-
 	struct ifaddrs *ifap, *ifa;
 	struct sockaddr_in *sa;
-
 	string addr;
-	vector<string> list;
 
+	// Get network adapter and loop through all the containers
+	// to recieve network information
 	getifaddrs(&ifap);
 	for(ifa = ifap;ifa;ifa = ifa->ifa_next)
 	{
@@ -72,36 +74,38 @@ vector<pair<string, string>> getSubnetMask()
 		{
 			sa = (struct sockaddr_in*) ifa->ifa_netmask;
 			addr = string(inet_ntoa(sa->sin_addr));
-
 			sa = (struct sockaddr_in*)ifa->ifa_addr;
-
+			 
+			// Add subnet and IP and generate a list
 			ipSubnetList.push_back(make_pair(string(inet_ntoa(sa->sin_addr)), addr));
 		}
 	}
+
 	freeifaddrs(ifap);
 	return ipSubnetList;
 }
 
+/* Generates the broadcast address using the IP, Subnet and bit arithmetic */
 vector<string> getBroadcastAddress()
 {
+	// Crate inet_addr struct to store IP and subnet
 	struct in_addr host, subnet, broadcast;
 	char broadcastAddr[INET_ADDRSTRLEN];
 
-	vector<pair<string, string>>::iterator it;
-	vector<pair<string, string>> ipSubnetList = getSubnetMask();
+	// Create vector pairs and vector to loop list of IP and subnets
+	// and generate broadcast IP to store in second vector
 	vector<string> broadcastList;
-
-
-	for (it = ipSubnetList.begin();it != ipSubnetList.end();it++)
+	for(auto const& ipPair : getIPSubnetList())
 	{
 
 		// Remove IP shells on the network
-		if (!it->first.compare("0.0.0.0"))continue;
+		if (!ipPair.first.compare("0.0.0.0"))continue;
 
-		// Remove localhost
-		if(!it->first.compare("127.0.0.1"))continue;
+		// Remove localhost from list
+		if(!ipPair.first.compare("127.0.0.1"))continue;
 
-		if(inet_pton(AF_INET, it->first.c_str(), &host) && inet_pton(AF_INET, it->second.c_str(), &subnet))
+		// Convert IP string into IP format and calculate broadcast IP
+		if(inet_pton(AF_INET, ipPair.first.c_str(), &host) && inet_pton(AF_INET, ipPair.second.c_str(), &subnet))
 			broadcast.s_addr = host.s_addr | ~subnet.s_addr;
 		else
 		{
@@ -109,6 +113,7 @@ vector<string> getBroadcastAddress()
 			exit(1);
 		}
 
+		// Convert IP format back to string format and add to broadcastList
 		if(inet_ntop(AF_INET, &broadcast, broadcastAddr, INET_ADDRSTRLEN) != NULL)
 			broadcastList.push_back(string(broadcastAddr));
 		else
@@ -123,18 +128,16 @@ vector<string> getBroadcastAddress()
 
 #elif _WIN32
 
+// Windows (MSVC) includes
 #include <winsock2.h>
 #include <Ws2tcpip.h>
 #include <Iphlpapi.h>
 
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
-#define INET_ADDRSTRLEN 16
 
-/*
- * Gets the IP address of all the network connections of local machine
- */
-vector<pair<string, string>> getDeviceIP()
+/* Gets the IP address of all the network connections of local machine */
+vector<pair<string, string>> getIPSubnetList()
 {
 	// Create variables for storage and system calls
 	vector<pair<string, string>> ipSubnetList;
@@ -148,6 +151,7 @@ vector<pair<string, string>> getDeviceIP()
 		cout << "Error allocating memory needed to call GetAdaptersinfo" << endl;
 		return ipSubnetList;
 	}
+
 	// Make an initial call to GetAdaptersInfo to get
 	// the necessary size into the ulOutBufLen variable
 	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) 
@@ -184,10 +188,7 @@ vector<pair<string, string>> getDeviceIP()
 	return ipSubnetList;
 }
 
-/*
- * Generates the broadcast address using the IP, Subnet and bit arithmetic
- *
- */
+/* Generates the broadcast address using the IP, Subnet and bit arithmetic */
 vector<string> getBroadcastAddress()
 {
 	// Create in_addr structs to store IP and subnet
@@ -196,28 +197,32 @@ vector<string> getBroadcastAddress()
 
 	// Create vector pairs and vector to loop list of IP and subnets
 	// and generate broadcast IP to store in second vector
-	vector<pair<string, string>>::iterator it;
-	vector<pair<string, string>> ipSubnetList = getDeviceIP();
 	vector<string> broadcastList;
-	for (it = ipSubnetList.begin();it != ipSubnetList.end();it++)
+	for(auto const& ipPair : getIPSubnetList())
 	{
 		// Remove IP shells on the network
-		if (!it->first.compare("0.0.0.0"))continue;
+		if (!ipPair.first.compare("0.0.0.0"))continue;
+		
+		// Remove localhost from list
+		if(!ipPair.first.compare("127.0.0.1"))continue;
 
 		// Convert IP string into IP format and calculate broadcast IP
-		if (InetPton(AF_INET, it->first.c_str(), &host) && InetPton(AF_INET, it->second.c_str(), &subnet))
+		if (InetPton(AF_INET, ipPair.first.c_str(), &host) && InetPton(AF_INET, ipPair.second.c_str(), &subnet))
 			broadcast.s_addr = host.s_addr | ~subnet.s_addr;
 		else
 		{
 			cout << "Error: Could not convert IP format to binary" << endl;
-			continue;
+			exit(1);
 		}
 
 		// Convert IP format back to string format and add to broadcastList
 		if (InetNtop(AF_INET, &broadcast, broadcastAddr, INET_ADDRSTRLEN) != NULL)
 			broadcastList.push_back(string(broadcastAddr));
 		else
+		{
 			cout << "Error: Could not convert broadcast to IP" << endl;
+			exit(1);
+		}
 	}
 
 	return broadcastList;
