@@ -101,7 +101,7 @@ endif()
 add_subdirectory(src/helloworld)
 
 # Turn off coverage flags
-set (CMAKE_CXX_FLAGS "${CMAKE_FLAGS_NOCOV}")
+set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")
 
 # Build settings for DEBUG builds only
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
