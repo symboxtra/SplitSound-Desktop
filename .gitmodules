@@ -4,3 +4,9 @@
 [submodule "src/libs/googletest"]
 	path = src/libs/googletest
 	url = https://github.com/symboxtra/googletest
+[submodule "src/libs/jrtplib"]
+	path = src/libs/jrtplib
+	url = https://github.com/symboxtra/jrtplib
+[submodule "src/libs/jthread"]
+	path = src/libs/jthread
+	url = https://github.com/symboxtra/jthread
