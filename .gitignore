@@ -3,6 +3,7 @@ build*/
 local*/
 OpenCppCoverageSetup.exe
 
+.vscode
 .*.swp
 
 ## Ignore Visual Studio temporary files, build results, and

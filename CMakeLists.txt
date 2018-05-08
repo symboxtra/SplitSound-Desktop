@@ -1,3 +1,5 @@
+######## Config ########
+
 cmake_minimum_required (VERSION 3.5)
 
 # Declare project
@@ -36,7 +38,12 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib/lib) # TODO: ?
 endforeach ()
 
-message(STATUS "\nBuilding needed dependency JThread...\n")
+
+
+
+######## Dependencies and Libs ########
+
+message(STATUS "\nBuilding required dependency JThread...\n")
 
 # Manually cmake and install JThread (required for JRTPLIB)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
@@ -59,10 +66,16 @@ set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/lib)
 add_subdirectory(src/libs/jrtplib)
 include_directories(${CMAKE_BINARY_DIR}/src/libs/jrtplib/src) # Include generated headers
 
+
+
+
+######## Qt ########
+
 # Prime for Qt
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_AUTOUIC ON)
+set (CMAKE_AUTORCC ON)
 
 # Find Qt on Windows (check CMake flags first, then environment variable)
 if (WIN32)
@@ -75,7 +88,7 @@ if (WIN32)
 
     # Cache and print Qt location
     set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Qt install path")
-    MESSAGE(STATUS "Qt5_DIR: " $	{Qt5_DIR})
+    MESSAGE(STATUS "Qt5_DIR: " ${Qt5_DIR})
 
     # Macro for lower level CMakeLists to copy DLLs
     macro (qt5_copy_dll APP DLL)
@@ -94,19 +107,81 @@ endif ()
 find_package(Qt5 REQUIRED
     Core
     Widgets
-    Gui
+	Gui
+	Network
+	Qml
+	Quick
+	QuickControls2
 )
 
-# Change flags only for gcc compiler
+
+
+
+######## Executable ########
+
+# Add coverage flags for GCC
 set (CXX_FLAGS_NOCOV "${CMAKE_CXX_FLAGS}")
 if (SS_ADD_COVERAGE_FLAGS)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
-add_subdirectory(src/helloworld)
+# Define macro for collecting source files
+macro (add_sources)
+    file (RELATIVE_PATH _relPath "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+    foreach (_src ${ARGN})
+        if (_relPath)
+            list (APPEND SRC_FILES "${_relPath}/${_src}")
+        else()
+            list (APPEND SRC_FILES "${_src}")
+        endif()
+    endforeach()
+    if (_relPath)
+        # propagate SRCS to parent directory
+        set (SRC_FILES ${SRC_FILES} PARENT_SCOPE)
+    endif()
+endmacro()
+
+add_subdirectory(src/gui)
+
+# Add executable
+if (WIN32)
+
+	add_executable(splitsound WIN32 ${SRC_FILES})
+
+	# Copy DLLs to binary output directory
+	qt5_copy_dll(splitsound Core)
+	qt5_copy_dll(splitsound Widgets)
+	qt5_copy_dll(splitsound Gui)
+	qt5_copy_dll(splitsound Network)
+	qt5_copy_dll(splitsound Qml)
+	qt5_copy_dll(splitsound Quick)
+	qt5_copy_dll(splitsound QuickControls2)
+
+
+else ()
+
+	add_executable(splitsound ${SRC_FILES})
+
+endif ()
+
+# Link Qt
+target_link_libraries(splitsound
+	Qt5::Core
+	Qt5::Widgets
+	Qt5::Gui
+	Qt5::Network
+	Qt5::Qml
+	Qt5::Quick
+	Qt5::QuickControls2
+)
 
 # Turn off coverage flags
 set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")
+
+
+
+
+####### Testing #######
 
 # Build settings for DEBUG builds only
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -129,7 +204,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	include_directories(
 		${PROJECT_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
 		${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
-		${PROJECT_SOURCE_DIR}/src/helloworld/src
+		${PROJECT_SOURCE_DIR}/src/gui/src
 	)
 
 	# Collect all test source files
