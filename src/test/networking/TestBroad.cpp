@@ -5,6 +5,6 @@
 
 TEST(TestBroad, HandleLocalHost)
 {
-	//for(auto const& addr : getBroadcastAddress())
-	EXPECT_STRNE("127.0.0.1", "128.0.0.1");
+	for(auto const&  addr : getBroadcastAddress())
+		EXPECT_STRNE("127.0.0.1", addr.c_str());
 }

@@ -57,10 +57,10 @@ string getDeviceIP()
 }
 
 /* Gets the IP address of all the network connections of local machine */
-vector<pair<string, string>> getIPSubnetList()
+vector<pair<string, string> > getIPSubnetList()
 {
 	// Create variables and structs for IP storage and system calls
-	vector<pair<string, string>> ipSubnetList;
+	vector<pair<string, string> > ipSubnetList;
 	struct ifaddrs *ifap, *ifa;
 	struct sockaddr_in *sa;
 	string addr;
