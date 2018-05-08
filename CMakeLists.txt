@@ -109,6 +109,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		${PROJECT_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
 		${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
 		${PROJECT_SOURCE_DIR}/src/helloworld/src
+		${PROJECT_SOURCE_DIR}/src/net/
 	)
 	
 	# Collect all test source files
@@ -126,7 +127,14 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	foreach(_test_file ${TEST_SRC_FILES})
 		get_filename_component(_test_name ${_test_file} NAME_WE)
 		add_executable(${_test_name} ${_test_file})
-		target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+		
+		if(WIN32)
+			target_link_libraries(${_test_name} wsock32 ws2_32 iphlpapi gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+		else()
+			target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+		endif()
+
+
 		add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test	
 		set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
 
