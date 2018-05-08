@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#ifdef __unix__
+#if defined(__linux__) ||  defined(__APPLE__)
 
 // Unix (GNU/Clang++) includes
 #include <errno.h>
