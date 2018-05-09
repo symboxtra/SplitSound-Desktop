@@ -146,7 +146,7 @@ add_subdirectory(src/gui)
 # Add executable
 if (WIN32)
 
-	add_executable(splitsound WIN32 ${SRC_FILES})
+        add_executable(splitsound ${SRC_FILES})
 
 	# Copy DLLs to binary output directory
 	qt5_copy_dll(splitsound Core)

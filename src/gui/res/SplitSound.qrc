@@ -1,6 +1,9 @@
-<!DOCTYPE RCC>
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>images/headphones.svg</file>
+        <file>fonts/materialdesignicons-webfont.ttf</file>
+        <file>IconLabel.qml</file>
+        <file>fonts/Icon.js</file>
     </qresource>
 </RCC>
