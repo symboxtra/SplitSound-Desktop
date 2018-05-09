@@ -1,4 +1,5 @@
 cmake_minimum_required (VERSION 3.5)
+set (CMAKE_CXX_STANDARD 11)
 
 # Declare project
 project (SplitSound CXX)
@@ -87,7 +88,6 @@ if (WIN32)
         add_custom_command(TARGET ${APP} POST_BUILD
            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>)
     endmacro ()
-
 endif ()
 
 # Required Qt packages
@@ -104,6 +104,7 @@ if (SS_ADD_COVERAGE_FLAGS)
 endif()
 
 add_subdirectory(src/helloworld)
+add_subdirectory(src/net)
 
 # Turn off coverage flags
 set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")
@@ -130,6 +131,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		${PROJECT_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
 		${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
 		${PROJECT_SOURCE_DIR}/src/helloworld/src
+		${PROJECT_SOURCE_DIR}/src/net/
 	)
 
 	# Collect all test source files
@@ -147,8 +149,12 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	foreach(_test_file ${TEST_SRC_FILES})
 		get_filename_component(_test_name ${_test_file} NAME_WE)
 		add_executable(${_test_name} ${_test_file})
-		target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
-		add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
+		if(WIN32)
+			target_link_libraries(${_test_name} wsock32 ws2_32 iphlpapi gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+		else()
+			target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+		endif()
+		add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test	
 		set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
 	endforeach()
 
