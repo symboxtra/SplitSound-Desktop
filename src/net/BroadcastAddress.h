@@ -20,42 +20,6 @@ using namespace std;
 #include <unistd.h>
 #include <ifaddrs.h>
 
-/* Ping internet servers to recieve back IP of device */
-string getDeviceIP()
-{
-	const char* google_server = "8.8.8.8";
-	int dns_port = 53;
-
-	struct sockaddr_in serv;
-	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-	if(sock < 0)
-		perror("Socket error");
-
-	memset(&serv, 0, sizeof(serv));
-	serv.sin_family = AF_INET;
-	serv.sin_addr.s_addr = inet_addr(google_server);
-	serv.sin_port = htons(dns_port);
-
-	int err = connect(sock, (const struct sockaddr*)&serv, sizeof(serv));
-
-	struct sockaddr_in name;
-	socklen_t namelen = sizeof(name);
-
-	err = getsockname(sock, (struct sockaddr*)&name, &namelen);
-
-	char buffer[100];
-	const char* p = inet_ntop(AF_INET, &name.sin_addr, buffer, 100);
-
-	string ip = "";
-	if(p != NULL)
-		ip = string(buffer);
-	else
-		ip = "ERROR";
-
-	close(sock);
-	return ip;
-}
-
 /* Gets the IP address of all the network connections of local machine */
 vector<pair<string, string> > getIPSubnetList()
 {
