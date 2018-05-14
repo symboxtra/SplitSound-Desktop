@@ -84,11 +84,11 @@ if (WIN32)
         if (NOT DEFINED ENV{QTDIR})
             MESSAGE(FATAL_ERROR "QTDIR environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQt5_DIR=C:\\path\\to\\Qt.")
         endif ()
-    endif ()
 
-    # Cache and print Qt location
-    set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Qt install path")
-    MESSAGE(STATUS "Qt5_DIR: " ${Qt5_DIR})
+		# Cache and print Qt location
+		set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Qt install path")
+		MESSAGE(STATUS "Qt5_DIR: " ${Qt5_DIR})
+	endif()
 
     # Macro for lower level CMakeLists to copy DLLs
     macro (qt5_copy_dll APP DLL)

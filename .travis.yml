@@ -39,7 +39,7 @@ install:
             tar -xzf qt-portable-ubuntu-16.04.tar.gz -C ../qt --strip-components 1
             cd ..
             PATH=$PWD/qt/bin:${PATH}
-            Qt5_DIR=$PWD/qt/5.10.1/gcc_64/lib/cmake/Qt5
+            QTDIR=$PWD/qt/5.10.1/gcc_64/lib/cmake/Qt5
             echo "Installed Qt 5.10.1"
         fi
 
