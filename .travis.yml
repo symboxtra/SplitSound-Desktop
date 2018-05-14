@@ -35,7 +35,7 @@ install:
             echo "Smudge skipped" # Test if smudge is skipped
             (cd $HOME/qt-portable && git lfs pull)
             mkdir $HOME/qt
-            tar -xzf qt-portable-ubuntu-16.04.tar.gz -C $HOME/qt --strip-components 1
+            tar -xzf $HOME/qt-portable/qt-portable-ubuntu-16.04.tar.gz -C $HOME/qt --strip-components 1
             PATH=$HOME/qt/5.10.1/gcc_64/bin:${PATH}
             qmake -v
             echo "Installed Qt 5.10.1"
