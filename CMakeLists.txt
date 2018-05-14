@@ -77,18 +77,20 @@ set (CMAKE_AUTOMOC ON)
 set (CMAKE_AUTOUIC ON)
 set (CMAKE_AUTORCC ON)
 
-# Find Qt on Windows (check CMake flags first, then environment variable)
+# Cache and print Qt location
+if (NOT DEFINED Qt5_DIR)
+	if (DEFINED ENV{QTDIR})
+		set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Path to Qt installation")
+	endif ()
+endif ()
+MESSAGE(STATUS "\nQt5_DIR: " ${Qt5_DIR} "\n")
+
+# Make sure Qt was found on Windows
 if (WIN32)
 
     if (NOT DEFINED Qt5_DIR)
-        if (NOT DEFINED ENV{QTDIR})
-            MESSAGE(FATAL_ERROR "QTDIR environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQt5_DIR=C:\\path\\to\\Qt.")
-        endif ()
-
-		# Cache and print Qt location
-		set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Qt install path")
-		MESSAGE(STATUS "Qt5_DIR: " ${Qt5_DIR})
-	endif()
+        MESSAGE(FATAL_ERROR "QTDIR environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQt5_DIR=C:\\path\\to\\Qt.")
+	endif ()
 
     # Macro for lower level CMakeLists to copy DLLs
     macro (qt5_copy_dll APP DLL)
