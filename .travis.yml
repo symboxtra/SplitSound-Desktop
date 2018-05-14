@@ -11,6 +11,7 @@ matrix:
 git:
     depth: 1 # Limit unneeded commit depth
     submodules: false
+    lfs_skip_smudge: true # Prevent rate limit during clone
 
 before_install:
     - set -o pipefail
@@ -27,8 +28,16 @@ install:
     - |
         if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
             sudo apt update
-            sudo apt install qt5-default
-            sudo apt install lcov 
+            sudo apt install lcov
+
+            # Download Qt 5.10.1
+            echo -e "machine github.com\n login $GITHUB_TOKEN" >> ~/.netrc # Authenticate to pull private repo and access Git LFS
+            git clone https://github.com/jmcker/qt-portable # Private
+            cd qt-portable
+            git lfs pull
+            tar -xzf qt-portable-ubuntu-16.04.tar.gz -C ../qt
+            cd ..
+            PATH=$PWD/qt/bin:${PATH}
         fi
 
 before_script:
