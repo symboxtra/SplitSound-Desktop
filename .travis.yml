@@ -32,9 +32,10 @@ install:
             # Download Qt 5.10.1
             echo -e "machine github.com\n login $GITHUB_TOKEN" >> ~/.netrc # Authenticate to pull private repo and access Git LFS
             GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/jmcker/qt-portable # Private
+            echo "Smudge skipped" # Test if smudge is skipped
             cd qt-portable
             git lfs pull
-            mkdir qt
+            mkdir ../qt
             tar -xzf qt-portable-ubuntu-16.04.tar.gz -C ../qt --strip-components 1
             cd ..
             PATH=$PWD/qt/bin:${PATH}
