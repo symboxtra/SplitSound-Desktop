@@ -32,9 +32,11 @@ install:
             sudo apt install lcov
 
             # Download Qt 5.10.1
+            echo
+            echo "Downloading Qt..."
             curl -L https://www.dropbox.com/s/f1xo8wbypvax9hr/qt-portable-ubuntu-16.04-v2.tar.gz?dl=1 -o $HOME/qt-portable-ubuntu-16.04-v2.tar.gz
             mkdir $HOME/qt
-            tar -xzf $HOME/qt-portable/qt-portable-ubuntu-16.04-v2.tar.gz -C $HOME/qt --strip-components 1
+            tar -xzf $HOME/qt-portable-ubuntu-16.04-v2.tar.gz -C $HOME/qt --strip-components 1
             PATH=$HOME/qt/5.10.1/gcc_64/bin:${PATH}
             qmake -v
             echo "Installed Qt 5.10.1"
