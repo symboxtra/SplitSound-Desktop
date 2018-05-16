@@ -30,12 +30,9 @@ install:
             sudo apt install lcov
 
             # Download Qt 5.10.1
-            echo -e "machine github.com\n login $GITHUB_TOKEN" >> ~/.netrc # Authenticate to pull private repo and access Git LFS
-            GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/jmcker/qt-portable $HOME/qt-portable # Private repo
-            echo "Smudge skipped" # Test if smudge is skipped
-            (cd $HOME/qt-portable && git lfs pull)
+            curl -L https://www.dropbox.com/s/f1xo8wbypvax9hr/qt-portable-ubuntu-16.04-v2.tar.gz?dl=1
             mkdir $HOME/qt
-            tar -xzf $HOME/qt-portable/qt-portable-ubuntu-16.04.tar.gz -C $HOME/qt --strip-components 1
+            tar -xzf $HOME/qt-portable/qt-portable-ubuntu-16.04-v2.tar.gz -C $HOME/qt --strip-components 1
             PATH=$HOME/qt/5.10.1/gcc_64/bin:${PATH}
             qmake -v
             echo "Installed Qt 5.10.1"
