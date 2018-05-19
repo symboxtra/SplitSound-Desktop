@@ -7,6 +7,32 @@ Text {
     font.family: "Material Design Icons"
     font.pixelSize: Math.min(0.1 * main_window.height, 0.3 * main_window.width)
 
+    verticalAlignment: Text.AlignVCenter
+
     color: "white"
-    opacity: 0.75
+
+    property real initialOpacity: 0.85
+    property real hoverOpacity: 0.6
+    opacity: initialOpacity
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        propagateComposedEvents: true // Allow clicks to propogate
+
+        // Pass click on
+        onPressed: {
+            parent.parent.focus = true // Switch focus for key events
+            mouse.accepted = false
+        }
+
+        // Hover controls
+        onEntered: {
+            parent.opacity = hoverOpacity
+        }
+        onExited: {
+            parent.opacity = initialOpacity
+        }
+    }
 }
