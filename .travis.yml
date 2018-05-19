@@ -25,7 +25,7 @@ install:
             brew update
             brew install qt
             brew install lcov
-            PATH=/usr/local/opt/qt/bin:${PATH}
+            export PATH=/usr/local/opt/qt/bin:${PATH}
         fi
     - |
         if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -37,7 +37,15 @@ install:
             curl -L https://www.dropbox.com/s/f1xo8wbypvax9hr/qt-portable-ubuntu-16.04-v2.tar.gz?dl=1 -o $HOME/qt-portable-ubuntu-16.04-v2.tar.gz
             mkdir $HOME/qt
             tar -xzf $HOME/qt-portable-ubuntu-16.04-v2.tar.gz -C $HOME/qt --strip-components 1
-            PATH=$HOME/qt/5.10.1/gcc_64/bin:${PATH}
+
+            export PATH=$HOME/qt/5.10.1/gcc_64/bin:${PATH}
+            export LD_LIBRARY_PATH=$HOME/qt/5.10.1/gcc_64/lib
+            export QT_PLUGIN_PATH=$HOME/qt/5.10.1/gcc_64/plugins
+            export QML_IMPORT_PATH=$HOME/qt/5.10.1/gcc_64/qml
+            export QML2_IMPORT_PATH=$HOME/qt/5.10.1/gcc_64/qml
+            export QT_DEBUG_PLUGINS=1
+            export QT_IMPORT_TRACE=1
+
             qmake -v
             echo "Installed Qt 5.10.1"
         fi
