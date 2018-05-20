@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import QtGraphicalEffects 1.0
 
 Rectangle {
@@ -56,10 +56,9 @@ Rectangle {
         onEntered: {} // Prevent hover events
     }
 
-    Label {
+    CustomLabel {
         anchors.fill: parent
         anchors.margins: 10
-        wrapMode: Text.WordWrap
         text: defaultMessage
     }
 

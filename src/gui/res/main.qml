@@ -221,7 +221,7 @@ ApplicationWindow {
                     propagateComposedEvents: true // Allow clicks to propogate
                 }
 
-                Label {
+                CustomLabel {
                     id: input_selector_combo_label
                     anchors.left: input_selector_modal.left
                     anchors.leftMargin: 5
@@ -237,7 +237,7 @@ ApplicationWindow {
                     width: parent.width - input_selector_combo_label.width - 10
                 }
 
-                Label {
+                CustomLabel {
                     id: input_selector_muted_label
                     anchors.left: input_selector_modal.left
                     anchors.leftMargin: 5

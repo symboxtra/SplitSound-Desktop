@@ -15,13 +15,13 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setApplicationName("SplitSound");
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    QQuickStyle::setStyle("Material");
 
     QSplitSoundApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
     // Must be done after creating the application
     QFontDatabase::addApplicationFont(":/fonts/materialdesignicons-webfont.ttf");
-    QQuickStyle::setStyle("Material");
 
     engine.load(QUrl("qrc:/main.qml"));
 

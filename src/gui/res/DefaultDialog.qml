@@ -15,7 +15,7 @@ Modal {
         anchors.margins: 10
         color: "transparent"
 
-        Label {
+        CustomLabel {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -0.5 * default_dialog_button_box.height
             text: message

@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import QtQuick.Controls 2.3
 
 Modal {
@@ -15,7 +15,7 @@ Modal {
     property int progressPercent: 50
     property int numServersFound: 0
 
-    Label {
+    CustomLabel {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: progress_bar.top
         anchors.bottomMargin: 15
@@ -28,7 +28,7 @@ Modal {
     }
 
 
-    Label {
+    CustomLabel {
         id: found_label
         anchors.top: progress_bar.bottom
         anchors.topMargin: 15
