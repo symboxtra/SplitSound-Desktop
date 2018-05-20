@@ -8,5 +8,8 @@
         <file>Label.qml</file>
         <file>Modal.qml</file>
         <file>DefaultDialog.qml</file>
+        <file>ServerSearch.qml</file>
+        <file>CustomProgressBar.qml</file>
+        <file>ParentDropShadow.qml</file>
     </qresource>
 </RCC>

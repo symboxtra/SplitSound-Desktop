@@ -3,7 +3,7 @@ import QtQuick.Controls 2.3
 
 Modal {
 
-    visible: true
+    visible: false
     defaultMessage: "" // Override warning message
 
     property string message: "Default dialog"
@@ -50,6 +50,7 @@ Modal {
             Button {
                 id: default_dialog_button_2
                 anchors.left: default_dialog_button_1.right
+                anchors.leftMargin: 3
                 anchors.verticalCenter: parent.verticalCenter
 
                 width: 0.5 * parent.width

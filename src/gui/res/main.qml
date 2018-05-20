@@ -14,7 +14,8 @@ ApplicationWindow {
     minimumWidth: 450
     minimumHeight: 280
 
-    property string m_accentColor: "#AE5733"
+    property string m_accentColor: "#C36037"
+    property string m_accentColorDark: "#8A3714"
     property string m_leftPanelColor: "#2F3136"
     property string m_rightPanelColor: "#36393E"
     property string m_headerFooterColor: "#232323"
@@ -27,271 +28,286 @@ ApplicationWindow {
     font.family: "Roboto"
 
     Rectangle {
-        id: left_panel
-        anchors.left: parent.left
+        id: main_container
 
-        width: 0.3 * parent.width
-        height: parent.height - footer.height
-
-        color: m_leftPanelColor
-
-        MouseArea {
-            id: left_window_mouse_area
-            anchors.fill: parent
-
-            onClicked: {
-                parent.focus = true // Switch focus for key events
-                closeModals()
-                console.log("left panel clicked")
-            }
-        }
-
-        Button {
-            anchors.centerIn: parent
-            text: "Open modals"
-
-            onClicked: {
-                displayDialog("Hey there", "OK", "Cancel")
-                displayDialog("Do something?", "Yes", "No")
-                customDialog("Timer", "", "", 5 * 1000)
-            }
-        }
-    } // END left_panel
-
-    Rectangle {
-        id: right_panel
-        anchors.left: left_panel.right
-
-        width: parent.width - left_panel.width
-        height: parent.height - footer.height
-
-        color: m_rightPanelColor
-
-        Button {
-            id: center_circle
-            anchors.centerIn: parent
-
-            antialiasing: true
-
-            background: Rectangle {
-                implicitWidth: Math.min(0.23 * main_window.width, 0.5 * main_window.height)
-                implicitHeight: implicitWidth
-                radius: implicitWidth * 0.5
-                color: m_accentColor
-            }
-
-            Image {
-                id: headphones
-                width: center_circle.width - 0.2 * center_circle.width
-                height: center_circle.height - 0.2 * center_circle.height
-                anchors.verticalCenterOffset: -9
-
-                fillMode: Image.PreserveAspectFit
-                anchors.centerIn: parent
-                source: "qrc:/images/headphones.svg"
-
-                antialiasing: true
-            }
-        }
-
-        // Must come after center_circle
-        DropShadow {
-            anchors.fill: center_circle
-            horizontalOffset: 0
-            verticalOffset: 4
-            radius: 8.0
-            samples: 17
-            color: "#80000000"
-            source: center_circle
-        }
-
-        MouseArea {
-            id: right_panel_mouse_area
-            anchors.fill: parent
-
-            onClicked: {
-                parent.focus = true // Switch focus for key events
-                closeModals()
-                console.log("right panel clicked")
-            }
-        }
-
-    } // END right_panel
-
-    Rectangle {
-        id: header
-        anchors.top: parent.top
-
-        width: main_window.width
-        height: Math.min(0.07 * main_window.height, 0.27 * main_window.width)
-
-        color: m_headerFooterColor
-
-        Text {
-            visible: true
-
-            text: main_window.width + " x " + main_window.height
-            color: "white"
-        }
-    }
-
-    Rectangle {
-        id: footer
-        anchors.bottom: parent.bottom
-
+        x: 0
+        y: 0
         width: parent.width
-        height: Math.min(0.13 * main_window.height, 0.33 * main_window.width)
-        color: m_headerFooterColor
+        height: parent.height
 
-        Rectangle {
-            id: media_controls_container
-            anchors.centerIn: parent
+        color: "transparent"
 
-            Button {
-                id: play_button
-                anchors.centerIn: parent
-
-                background: IconLabel {
-                    text: MdiFont.Icon.play
-                }
-            }
-
-            Button {
-                id: pause_button
-                anchors.centerIn: parent
-
-                visible: false
-
-                background: IconLabel {
-                    text: MdiFont.Icon.pause
-                }
-            }
-
-            Button {
-                id: prev_button
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: play_button.left
-                anchors.rightMargin: 15
-
-                background: IconLabel {
-                    text: MdiFont.Icon.skipPrevious
-                }
-            }
-
-            Button {
-                id: next_button
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: play_button.right
-                anchors.leftMargin: 15
-
-                background: IconLabel {
-                    text: MdiFont.Icon.skipNext
-                }
-            }
-        } // END media_controls_container
-
-        Modal {
-            id: input_selector_modal
-            anchors.centerIn: undefined // Override default centering
-            anchors.right: footer.right
-            anchors.rightMargin: volume_slider.width - 25
-            anchors.bottom: footer.top
-            anchors.bottomMargin: 1
-
-            defaultMessage: "" // Override warning message
-
-            // Must be before other clickable elements (z-index lower)
-            MouseArea {
-                id: unique
-                anchors.fill: parent
-                propagateComposedEvents: true // Allow clicks to propogate
-            }
-
-            Label {
-                id: input_selector_combo_label
-                anchors.left: input_selector_modal.left
-                anchors.leftMargin: 5
-                anchors.verticalCenter: input_selector_combo.verticalCenter
-
-                text: "Input: "
-            }
-
-            ComboBox {
-                id: input_selector_combo
-                anchors.left: input_selector_combo_label.right
-
-                width: parent.width - input_selector_combo_label.width - 10
-            }
-
-            Label {
-                id: input_selector_muted_label
-                anchors.left: input_selector_modal.left
-                anchors.leftMargin: 5
-                anchors.verticalCenter: input_selector_muted_check.verticalCenter
-
-                text: "Muted: "
-            }
-
-            CheckBox {
-                id: input_selector_muted_check
-                anchors.left: input_selector_muted_label.right
-                anchors.top: input_selector_combo.bottom
-            }
-
-        } // END input_selector_modal
-
-        // input_selector_modal drop shadow
-        DropShadow {
-            anchors.fill: input_selector_modal
-            horizontalOffset: 1
-            verticalOffset: 2
-            radius: 8.0
-            samples: 17
-            color: "#80000000"
-            source: input_selector_modal
-
-            visible: input_selector_modal.visible
+        ServerSearch {
+            id: server_search
         }
 
-        // Modal trigger and volume slider
         Rectangle {
-            id: footer_right_container
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            color: "green"
+            id: left_panel
+            anchors.left: parent.left
 
-            Button {
-                id: input_selector_trigger
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: volume_slider.left
-                anchors.rightMargin: 10
+            width: 0.3 * parent.width
+            height: parent.height - footer.height
 
-                background: IconLabel {
-                    text: MdiFont.Icon.microphone
-                    font.pixelSize: Math.min(0.05 * main_window.height, 0.27 * main_window.width)
-                }
+            color: m_leftPanelColor
+
+            MouseArea {
+                id: left_window_mouse_area
+                anchors.fill: parent
 
                 onClicked: {
-                    input_selector_modal.focus = true
-                    input_selector_modal.visible = !input_selector_modal.visible
+                    parent.focus = true // Switch focus for key events
+                    closeModals()
+                    console.log("left panel clicked")
                 }
             }
 
-            Slider {
-                id: volume_slider
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: 10
+            Button {
+                anchors.centerIn: parent
+                text: "Open modals"
 
-                width: 0.1 * footer.width
+                onClicked: {
+                    displayDialog("Hey there", "OK", "Cancel")
+                    displayDialog("Do something?", "Yes", "No")
+                    customDialog("Timer", "", "", 5 * 1000)
+                }
+            }
+        } // END left_panel
 
-                property real initialVal: 0.8
-                value: initialVal
+        Rectangle {
+            id: right_panel
+            anchors.left: left_panel.right
+
+            width: parent.width - left_panel.width
+            height: parent.height - footer.height
+
+            color: m_rightPanelColor
+
+            Button {
+                id: center_circle
+                anchors.centerIn: parent
+
+                antialiasing: true
+
+                background: Rectangle {
+                    implicitWidth: Math.min(0.23 * main_container.width, 0.5 * main_container.height)
+                    implicitHeight: implicitWidth
+                    radius: implicitWidth * 0.5
+                    color: m_accentColor
+                }
+
+                Image {
+                    id: headphones
+                    width: center_circle.width - 0.2 * center_circle.width
+                    height: center_circle.height - 0.2 * center_circle.height
+                    anchors.verticalCenterOffset: -9
+
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    source: "qrc:/images/headphones.svg"
+
+                    antialiasing: true
+                }
             }
 
-        } // END footer_right_container
+            // Must come after center_circle
+            DropShadow {
+                anchors.fill: center_circle
+                horizontalOffset: 0
+                verticalOffset: 4
+                radius: 8.0
+                samples: 17
+                color: "#80000000"
+                source: center_circle
+            }
 
-    } // END footer
+            MouseArea {
+                id: right_panel_mouse_area
+                anchors.fill: parent
+
+                onClicked: {
+                    parent.focus = true // Switch focus for key events
+                    closeModals()
+                    console.log("right panel clicked")
+                }
+            }
+
+        } // END right_panel
+
+        Rectangle {
+            id: header
+            anchors.top: parent.top
+
+            width: main_container.width
+            height: Math.min(0.07 * main_container.height, 0.27 * main_container.width)
+
+            color: m_headerFooterColor
+
+            Text {
+                visible: true
+
+                text: main_container.width + " x " + main_container.height
+                color: "white"
+            }
+        }
+
+        Rectangle {
+            id: footer
+            anchors.bottom: parent.bottom
+
+            width: parent.width
+            height: Math.min(0.13 * main_container.height, 0.33 * main_container.width)
+            color: m_headerFooterColor
+
+            Rectangle {
+                id: media_controls_container
+                anchors.centerIn: parent
+
+                Button {
+                    id: play_button
+                    anchors.centerIn: parent
+
+                    background: IconLabel {
+                        text: MdiFont.Icon.play
+                    }
+                }
+
+                Button {
+                    id: pause_button
+                    anchors.centerIn: parent
+
+                    visible: false
+
+                    background: IconLabel {
+                        text: MdiFont.Icon.pause
+                    }
+                }
+
+                Button {
+                    id: prev_button
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: play_button.left
+                    anchors.rightMargin: 15
+
+                    background: IconLabel {
+                        text: MdiFont.Icon.skipPrevious
+                    }
+                }
+
+                Button {
+                    id: next_button
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: play_button.right
+                    anchors.leftMargin: 15
+
+                    background: IconLabel {
+                        text: MdiFont.Icon.skipNext
+                    }
+                }
+            } // END media_controls_container
+
+            Modal {
+                id: input_selector_modal
+                anchors.centerIn: undefined // Override default centering
+                anchors.right: footer.right
+                anchors.rightMargin: volume_slider.width - 25
+                anchors.bottom: footer.top
+                anchors.bottomMargin: 1
+
+                defaultMessage: "" // Override warning message
+
+                // Must be before other clickable elements (z-index lower)
+                MouseArea {
+                    anchors.fill: parent
+                    propagateComposedEvents: true // Allow clicks to propogate
+                }
+
+                Label {
+                    id: input_selector_combo_label
+                    anchors.left: input_selector_modal.left
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: input_selector_combo.verticalCenter
+
+                    text: "Input: "
+                }
+
+                ComboBox {
+                    id: input_selector_combo
+                    anchors.left: input_selector_combo_label.right
+
+                    width: parent.width - input_selector_combo_label.width - 10
+                }
+
+                Label {
+                    id: input_selector_muted_label
+                    anchors.left: input_selector_modal.left
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: input_selector_muted_check.verticalCenter
+
+                    text: "Muted: "
+                }
+
+                CheckBox {
+                    id: input_selector_muted_check
+                    anchors.left: input_selector_muted_label.right
+                    anchors.top: input_selector_combo.bottom
+                }
+
+            } // END input_selector_modal
+
+            // input_selector_modal drop shadow
+            DropShadow {
+                anchors.fill: input_selector_modal
+                horizontalOffset: 1
+                verticalOffset: 2
+                radius: 8.0
+                samples: 17
+                color: "#80000000"
+                source: input_selector_modal
+
+                visible: input_selector_modal.visible
+            }
+
+            // Modal trigger and volume slider
+            Rectangle {
+                id: footer_right_container
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                color: "green"
+
+                Button {
+                    id: input_selector_trigger
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: volume_slider.left
+                    anchors.rightMargin: 10
+
+                    background: IconLabel {
+                        text: MdiFont.Icon.microphone
+                        font.pixelSize: Math.min(0.05 * main_container.height, 0.27 * main_container.width)
+                    }
+
+                    onClicked: {
+                        input_selector_modal.focus = true
+                        input_selector_modal.visible = !input_selector_modal.visible
+                    }
+                }
+
+                Slider {
+                    id: volume_slider
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+
+                    width: 0.1 * footer.width
+
+                    property real initialVal: 0.8
+                    value: initialVal
+                }
+
+            } // END footer_right_container
+
+        } // END footer
+    } // END main_container
+
 
     function displayInfo(message) {
         displayDialog(message, "OK", "")
@@ -302,7 +318,7 @@ ApplicationWindow {
     }
 
     function customDialog(message, button1, button2, time) {
-        var dialog = Qt.createQmlObject("DefaultDialog {}", main_window)
+        var dialog = Qt.createQmlObject("DefaultDialog {}", main_container)
 
         if (dialog == null) {
             console.log("Dialog creation failed!")
