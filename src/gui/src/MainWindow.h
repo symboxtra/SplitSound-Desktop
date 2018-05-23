@@ -1,14 +1,14 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <QMainWindow>
+#include <QQuickView>
 
-class MainWindow : public QMainWindow
+class QSplitSoundApplication;
+
+class MainWindow : public QQuickView
 {
 
     private:
-
-        void createStatusBar();
         
 
     public:

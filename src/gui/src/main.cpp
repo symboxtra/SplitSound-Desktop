@@ -1,4 +1,3 @@
-#include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QFontDatabase>
 #include <QQmlDebuggingEnabler>
@@ -18,12 +17,15 @@ int main(int argc, char *argv[]) {
     QQuickStyle::setStyle("Material");
 
     QSplitSoundApplication app(argc, argv);
-    QQmlApplicationEngine engine;
 
     // Must be done after creating the application
     QFontDatabase::addApplicationFont(":/fonts/materialdesignicons-webfont.ttf");
+    QFont font("Roboto");
+    font.setStyleHint(QFont::SansSerif);
+    QApplication::setFont(font);
 
-    engine.load(QUrl("qrc:/main.qml"));
+    MainWindow mainWindow;
+    mainWindow.show();
 
     return app.exec();
 }

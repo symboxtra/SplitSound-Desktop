@@ -3,12 +3,12 @@
 
 MainWindow::MainWindow()
 {
+    setTitle("SplitSound");
+    resize(800, 500);
+    setMinimumSize(QSize(450, 280));
+    setResizeMode(QQuickView::SizeRootObjectToView); // Size QML root to window
 
-}
-
-void MainWindow::createStatusBar()
-{
-
+    setSource(QUrl("qrc:/main.qml"));
 }
 
 MainWindow::~MainWindow()

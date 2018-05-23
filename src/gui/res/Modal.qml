@@ -74,7 +74,7 @@ Rectangle {
     }
 
     Keys.onPressed: {
-        if (allowClose && (event.key == Qt.Key_Escape) && (!event.modifiers))
+        if (allowClose && (event.key === Qt.Key_Escape) && (!event.modifiers))
         {
             console.log("escape pressed in modal")
             closeSelf()

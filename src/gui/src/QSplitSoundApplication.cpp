@@ -3,7 +3,6 @@
 #include <QtGui>
 
 #include "QSplitSoundApplication.h"
-#include "MainWindow.h"
 
 QSplitSoundApplication * QSplitSoundApplication::m_instance = NULL;
 
