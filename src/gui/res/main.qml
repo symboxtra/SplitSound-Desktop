@@ -16,6 +16,7 @@ Rectangle {
     property string m_modalColor: Qt.darker(m_leftPanelColor, 1.3)
 
     property bool m_enableClickToClose: true
+    property bool m_showToolTips: true
 
     color: "transparent"
     Material.theme: Material.Dark
@@ -23,19 +24,21 @@ Rectangle {
 
     ServerSearch {
         id: server_search
+        visible: false
     }
 
     Rectangle {
         id: left_panel
+        anchors.top: header.bottom
         anchors.left: parent.left
 
         width: 0.3 * parent.width
-        height: parent.height - footer.height
+        height: parent.height - header.height - footer.height
 
         color: m_leftPanelColor
 
         MouseArea {
-            id: left_window_mouse_area
+            id: left_panel_mouse_area
             anchors.fill: parent
 
             onClicked: {
@@ -45,24 +48,32 @@ Rectangle {
             }
         }
 
+        CustomLabel {
+            id: currently_listening_label
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.margins: 5
+            text: "Currently Listening:"
+        }
+
         Button {
             anchors.centerIn: parent
             text: "Open modals"
 
             onClicked: {
-                displayDialog("Hey there", "OK", "Cancel")
-                displayDialog("Do something?", "Yes", "No")
-                customDialog("Timer", "", "", 5 * 1000)
+                displayDialog("Example", "Hey there", "OK", "Cancel")
+                displayDialog("Confirm", "Do something?", "Yes", "No")
             }
         }
     } // END left_panel
 
     Rectangle {
         id: right_panel
+        anchors.top: header.bottom
         anchors.left: left_panel.right
 
         width: parent.width - left_panel.width
-        height: parent.height - footer.height
+        height: parent.height - header.height - footer.height
 
         color: m_rightPanelColor
 
@@ -143,6 +154,67 @@ Rectangle {
         color: m_headerFooterColor
 
         Rectangle {
+            id: footer_left_container
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+
+            height: parent.height
+
+            property string currentConnection: "Jack's server"
+
+            CustomLabel {
+                id: connected_label
+                anchors.left: parent.left
+
+                width: 0.17 * footer.width
+                height: parent.height
+
+                elide: Text.ElideRight
+                maximumLineCount: 3
+                font.weight: Font.ExtraLight
+                horizontalAlignment: Text.AlignLeft
+                opacity: 0.85
+
+                text: "<b>Connected to:</b> " + footer_left_container.currentConnection
+
+                MouseArea {
+                    hoverEnabled: true // Show full name on hover
+                }
+
+                // Display full name in case of ellipsis
+                HoverToolTip {
+                    text: "Connected to:\n" + footer_left_container.currentConnection
+                }
+            }
+
+            Button {
+                id: footer_disconnect_button
+                anchors.left: connected_label.right
+                anchors.leftMargin: 3
+                anchors.verticalCenter: parent.verticalCenter
+
+                background: IconLabel {
+                    text: MdiFont.Icon.cellphoneLinkOff
+                }
+
+                HoverToolTip {
+                    text: "Disconnect"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: {
+                        displayDialog("Woah there...", "Are you sure you want to disconnect?", "Yes", "No");
+                    }
+                }
+            }
+
+        } // END footer_left_container
+
+        Rectangle {
             id: media_controls_container
             anchors.centerIn: parent
 
@@ -152,6 +224,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.play
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
                 }
             }
 
@@ -163,6 +236,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.pause
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
                 }
             }
 
@@ -174,6 +248,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.skipPrevious
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
                 }
             }
 
@@ -185,6 +260,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.skipNext
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
                 }
             }
         } // END media_controls_container
@@ -197,7 +273,11 @@ Rectangle {
             anchors.bottom: footer.top
             anchors.bottomMargin: 1
 
-            defaultMessage: "" // Override warning message
+            width: 0.4 * main_container.width
+            height: 0.5 * main_container.height
+
+            message: "" // Override warning message
+            showCloseButton: false
 
             // Must be before other clickable elements (z-index lower)
             MouseArea {
@@ -219,6 +299,10 @@ Rectangle {
                 anchors.left: input_selector_combo_label.right
 
                 width: parent.width - input_selector_combo_label.width - 10
+
+                HoverToolTip {
+                    text: "Select the device you would like to share"
+                }
             }
 
             CustomLabel {
@@ -227,13 +311,36 @@ Rectangle {
                 anchors.leftMargin: 5
                 anchors.verticalCenter: input_selector_muted_check.verticalCenter
 
-                text: "Muted: "
+                text: "Transmit: "
             }
 
             CheckBox {
                 id: input_selector_muted_check
                 anchors.left: input_selector_muted_label.right
                 anchors.top: input_selector_combo.bottom
+
+                HoverToolTip {
+                    text: "Enable transmission to other devices"
+                }
+            }
+
+            Button {
+                id: input_add_stream_button
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 5
+
+                background: IconLabel {
+                    text: MdiFont.Icon.plusCircle
+                }
+
+                HoverToolTip {
+                    text: "Share an additional audio stream"
+                }
+
+                onClicked: {
+                    console.log("add stream")
+                }
             }
 
         } // END input_selector_modal
@@ -254,9 +361,10 @@ Rectangle {
         // Modal trigger and volume slider
         Rectangle {
             id: footer_right_container
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
             anchors.right: parent.right
-            color: "green"
+            anchors.rightMargin: 10
 
             Button {
                 id: input_selector_trigger
@@ -266,12 +374,15 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.microphone
-                    font.pixelSize: Math.min(0.05 * main_container.height, 0.27 * main_container.width)
                 }
 
                 onClicked: {
                     input_selector_modal.focus = true
                     input_selector_modal.visible = !input_selector_modal.visible
+                }
+
+                HoverToolTip {
+                    text: "Transmission settings"
                 }
             }
 
@@ -279,12 +390,16 @@ Rectangle {
                 id: volume_slider
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: 10
 
                 width: 0.1 * footer.width
 
-                property real initialVal: 0.8
-                value: initialVal
+                value: 1.0
+
+                ToolTip {
+                    parent: volume_slider.handle
+                    visible: volume_slider.pressed
+                    text: Math.round(volume_slider.value * 100)
+                }
             }
 
         } // END footer_right_container
@@ -292,14 +407,14 @@ Rectangle {
     } // END footer
 
     function displayInfo(message) {
-        displayDialog(message, "OK", "")
+        displayDialog("", message, "OK", "")
     }
 
-    function displayDialog(message, button1, button2) {
-        customDialog(message, button1, button2, -1)
+    function displayDialog(title, message, button1, button2) {
+        customDialog(title, message, button1, button2, -1, true)
     }
 
-    function customDialog(message, button1, button2, time) {
+    function customDialog(title, message, button1, button2, time, allowClose) {
         var dialog = Qt.createQmlObject("DefaultDialog {}", main_container)
 
         if (dialog == null) {
@@ -311,7 +426,9 @@ Rectangle {
         dialog.visible = true
         dialog.focus = true
         dialog.time = time
+        dialog.title = title
         dialog.message = message
+        dialog.allowClose = allowClose
         dialog.button1Text = button1
         dialog.button2Text = button2
 

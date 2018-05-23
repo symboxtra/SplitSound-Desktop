@@ -1,5 +1,8 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.3
 import QtGraphicalEffects 1.0
+import "fonts/Icon.js" as MdiFont
 
 Rectangle {
     id: modal
@@ -16,10 +19,12 @@ Rectangle {
     property int time: -1
     property bool dynamic: false
     property bool allowClose: true
+    property bool showCloseButton: true
     property bool useClickBlocker: false
     property bool useBackgroundFilter: false
-    property string defaultMessage: "Remember to add this modal to the closeModals function if you want it to auto-close when clicking outside of it.\n
-                                     Assign \"\" to defaultMessage to stop showing this."
+    property string title: ""
+    property string message: "Remember to add this modal to the closeModals function if you want it to auto-close when clicking outside of it.\n
+                                     Assign \"\" to message to stop showing this."
 
     // Background filter and click blocker
     Rectangle {
@@ -57,9 +62,21 @@ Rectangle {
     }
 
     CustomLabel {
-        anchors.fill: parent
-        anchors.margins: 10
-        text: defaultMessage
+        id: modal_title
+        anchors.top: parent.top
+        anchors.topMargin: 0.2 * parent.height
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        font.weight: Font.ExtraBold
+        text: title
+    }
+
+    CustomLabel {
+        id: modal_message_box
+        anchors.centerIn: parent
+        width: 0.8 * parent.width
+
+        text: message
     }
 
     // Must be before other clickable elements (z-index lower)
@@ -80,6 +97,28 @@ Rectangle {
             closeSelf()
         }
     }
+
+    // close button (x)
+    Button {
+        id: upper_close_button
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 5
+
+        visible: allowClose && showCloseButton
+
+        background: IconLabel {
+            text: MdiFont.Icon.closeCircleOutline
+            color: Material.color(Material.Red)
+            opacity: 0.7
+        }
+
+        onClicked: {
+            closeSelf() // TODO: send cancelled signal if applicable
+        }
+    }
+
+
 
     function closeSelf() {
         if (dynamic && time != -1)

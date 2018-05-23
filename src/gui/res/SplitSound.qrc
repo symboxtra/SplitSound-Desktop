@@ -10,5 +10,7 @@
         <file>DefaultDialog.qml</file>
         <file>ServerSearch.qml</file>
         <file>CustomProgressBar.qml</file>
+        <file>HoverToolTip.qml</file>
+        <file>ListeningUser.qml</file>
     </qresource>
 </RCC>

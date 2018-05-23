@@ -4,9 +4,8 @@ import QtQuick.Controls 2.3
 Modal {
 
     visible: false
-    defaultMessage: "" // Override warning message
+    message: "" // Override warning message
 
-    property string message: "Default dialog"
     property string button1Text: "OK"
     property string button2Text: "Cancel"
 
@@ -14,12 +13,6 @@ Modal {
         anchors.fill: parent
         anchors.margins: 10
         color: "transparent"
-
-        CustomLabel {
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -0.5 * default_dialog_button_box.height
-            text: message
-        }
 
         Rectangle {
             id: default_dialog_button_box

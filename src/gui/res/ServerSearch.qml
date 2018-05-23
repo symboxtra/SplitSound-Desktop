@@ -4,8 +4,8 @@ import QtQuick.Controls 2.3
 Modal {
 
     visible: true
-    defaultMessage: "" // Override warning message
-    allowClose: false
+    message: "" // Override warning message
+    allowClose: true
     useClickBlocker: true
     useBackgroundFilter: true
 
