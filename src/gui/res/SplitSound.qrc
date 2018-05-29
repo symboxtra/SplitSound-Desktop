@@ -11,6 +11,6 @@
         <file>ServerSearch.qml</file>
         <file>CustomProgressBar.qml</file>
         <file>HoverToolTip.qml</file>
-        <file>ListeningUser.qml</file>
+        <file>UserList.qml</file>
     </qresource>
 </RCC>

@@ -11,28 +11,33 @@ Text {
 
     color: "white"
 
+    property bool clickable: true
     property real initialOpacity: 0.85
     property real hoverOpacity: 0.6
     opacity: initialOpacity
 
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        hoverEnabled: true
+        cursorShape: (clickable) ? Qt.PointingHandCursor : undefined
+        hoverEnabled: clickable
         propagateComposedEvents: true // Allow clicks to propogate
 
         // Pass click on
         onPressed: {
-            parent.parent.focus = true // Switch focus for key events
+            if (clickable)
+                parent.parent.focus = true // Switch focus for key events
             mouse.accepted = false
         }
 
         // Hover controls
         onEntered: {
-            parent.opacity = hoverOpacity
+            if (clickable)
+                parent.opacity = hoverOpacity
         }
         onExited: {
-            parent.opacity = initialOpacity
+            if (clickable)
+                parent.opacity = initialOpacity
         }
     }
 }

@@ -48,23 +48,42 @@ Rectangle {
             }
         }
 
-        CustomLabel {
+        Rectangle {
             id: currently_listening_label
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.margins: 5
-            text: "Currently Listening:"
-        }
 
-        Button {
-            anchors.centerIn: parent
-            text: "Open modals"
+            width: parent.width
+            height: 0.08 * parent.height
 
-            onClicked: {
-                displayDialog("Example", "Hey there", "OK", "Cancel")
-                displayDialog("Confirm", "Do something?", "Yes", "No")
+            color: m_leftPanelColor
+            z: 2
+
+            CustomLabel {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.verticalCenter: parent.verticalCenter
+
+                width: parent.width
+                height: parent.height
+
+                horizontalAlignment: Text.AlignLeft
+                text: "Currently Listening:"
+            }
+
+            IconLabel {
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                text: MdiFont.Icon.accountMultiple
+                clickable: false
             }
         }
+
+        UserList {}
+
     } // END left_panel
 
     Rectangle {
@@ -102,7 +121,12 @@ Rectangle {
 
                 antialiasing: true
             }
-        }
+
+            HoverToolTip {
+                text: "Mute"
+            }
+
+        } // END center_circle
 
         // Must come after center_circle
         DropShadow {
@@ -167,8 +191,10 @@ Rectangle {
                 id: connected_label
                 anchors.left: parent.left
 
-                width: 0.17 * footer.width
+                width: 0.15 * footer.width
                 height: parent.height
+
+                property bool hovered: false
 
                 elide: Text.ElideRight
                 maximumLineCount: 3
@@ -179,12 +205,21 @@ Rectangle {
                 text: "<b>Connected to:</b> " + footer_left_container.currentConnection
 
                 MouseArea {
-                    hoverEnabled: true // Show full name on hover
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onEntered: {
+                        parent.hovered = true
+                    }
+
+                    onExited: {
+                        parent.hovered = false
+                    }
                 }
 
                 // Display full name in case of ellipsis
                 HoverToolTip {
-                    text: "Connected to:\n" + footer_left_container.currentConnection
+                    text: "Connected to:<br>" + footer_left_container.currentConnection
                 }
             }
 
@@ -367,6 +402,25 @@ Rectangle {
             anchors.rightMargin: 10
 
             Button {
+                id: settings_trigger
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: input_selector_trigger.left
+                anchors.rightMargin: 10
+
+                background: IconLabel {
+                    text: MdiFont.Icon.settings
+                }
+
+                onClicked: {
+                    console.log("Settings opened")
+                }
+
+                HoverToolTip {
+                    text: "Settings"
+                }
+            }
+
+            Button {
                 id: input_selector_trigger
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: volume_slider.left
@@ -382,7 +436,7 @@ Rectangle {
                 }
 
                 HoverToolTip {
-                    text: "Transmission settings"
+                    text: "Transmission Settings"
                 }
             }
 
