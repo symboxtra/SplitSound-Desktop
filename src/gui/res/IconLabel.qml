@@ -5,7 +5,7 @@ import "fonts/Icon.js" as MdiFont
 
 Text {
     font.family: "Material Design Icons"
-    font.pixelSize: Math.min(0.05 * main_container.height, 0.27 * main_container.width)
+    font.pixelSize: Math.min(0.05 * main_container.height, 0.05 * main_container.width)
 
     verticalAlignment: Text.AlignVCenter
 

@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import "Constants.js" as Constants
 
 Rectangle {
     id: outer_progres_bar
@@ -10,8 +11,8 @@ Rectangle {
     property real value: 50
     property real minimum: 0
     property real maximum: 100
-    property string progressColor: m_accentColorDark
-    property string backgroundColor: m_accentColor
+    property string progressColor: Constants.accentColorDark
+    property string backgroundColor: Constants.accentColor
 
     color: backgroundColor
 

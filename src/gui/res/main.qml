@@ -3,24 +3,16 @@ import QtQuick.Controls 2.3
 import QtQuick.Controls.Material 2.3
 import QtGraphicalEffects 1.0
 import "fonts/Icon.js" as MdiFont
+import "Constants.js" as Constants
+
 
 Rectangle {
     id: main_container
     anchors.fill: parent
 
-    property string m_accentColor: "#C36037"
-    property string m_accentColorDark: "#8A3714"
-    property string m_leftPanelColor: "#2F3136"
-    property string m_rightPanelColor: "#36393E"
-    property string m_headerFooterColor: "#232323"
-    property string m_modalColor: Qt.darker(m_leftPanelColor, 1.3)
-
-    property bool m_enableClickToClose: true
-    property bool m_showToolTips: true
-
     color: "transparent"
     Material.theme: Material.Dark
-    Material.accent: m_accentColor
+    Material.accent: Constants.accentColor
 
     ServerSearch {
         id: server_search
@@ -35,7 +27,7 @@ Rectangle {
         width: 0.3 * parent.width
         height: parent.height - header.height - footer.height
 
-        color: m_leftPanelColor
+        color: Constants.leftPanelColor
 
         MouseArea {
             id: left_panel_mouse_area
@@ -56,16 +48,16 @@ Rectangle {
             width: parent.width
             height: 0.08 * parent.height
 
-            color: m_leftPanelColor
+            color: Constants.leftPanelColor
             z: 2
 
             CustomLabel {
+                id: currently_listening_text
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.leftMargin: 5
                 anchors.verticalCenter: parent.verticalCenter
 
-                width: parent.width
                 height: parent.height
 
                 horizontalAlignment: Text.AlignLeft
@@ -73,16 +65,21 @@ Rectangle {
             }
 
             IconLabel {
+                id: currently_listening_icon
                 anchors.top: parent.top
-                anchors.topMargin: 5
+                anchors.topMargin: 3
                 anchors.right: parent.right
                 anchors.rightMargin: 5
                 text: MdiFont.Icon.accountMultiple
                 clickable: false
+
+                visible: parent.width > (currently_listening_text.width + width + anchors.rightMargin + 2)
             }
         }
 
-        UserList {}
+        UserList {
+            id: active_users
+        }
 
     } // END left_panel
 
@@ -94,7 +91,7 @@ Rectangle {
         width: parent.width - left_panel.width
         height: parent.height - header.height - footer.height
 
-        color: m_rightPanelColor
+        color: Constants.rightPanelColor
 
         Button {
             id: center_circle
@@ -106,7 +103,7 @@ Rectangle {
                 implicitWidth: Math.min(0.23 * main_container.width, 0.5 * main_container.height)
                 implicitHeight: implicitWidth
                 radius: implicitWidth * 0.5
-                color: m_accentColor
+                color: Constants.accentColor
             }
 
             Image {
@@ -157,15 +154,42 @@ Rectangle {
         anchors.top: parent.top
 
         width: main_container.width
-        height: Math.min(0.07 * main_container.height, 0.27 * main_container.width)
+        height: 55
 
-        color: m_headerFooterColor
+        color: Constants.headerFooterColor
 
-        Text {
-            visible: true
+        ServerList {
+            id: joined_servers
+            anchors.left: parent.left
+            sizeToModel: true
+            z: 1
+        }
 
-            text: main_container.width + " x " + main_container.height
-            color: "white"
+        Rectangle {
+            id: server_divider
+            anchors.top: parent.top
+            anchors.left: joined_servers.right
+
+            height: parent.height
+
+            color: "transparent"
+            z: 2
+
+            Rectangle {
+                anchors.centerIn: parent
+
+                width: 3
+                height: parent.height
+                radius: 4
+            }
+        }
+
+        ServerList {
+            id: available_servers
+            anchors.left: server_divider.right
+            width: parent.width - joined_servers.width
+
+            z: 0
         }
     }
 
@@ -175,7 +199,7 @@ Rectangle {
 
         width: parent.width
         height: Math.min(0.13 * main_container.height, 0.33 * main_container.width)
-        color: m_headerFooterColor
+        color: Constants.headerFooterColor
 
         Rectangle {
             id: footer_left_container
@@ -218,7 +242,7 @@ Rectangle {
                 }
 
                 // Display full name in case of ellipsis
-                HoverToolTip {
+                OverflowToolTip {
                     text: "Connected to:<br>" + footer_left_container.currentConnection
                 }
             }
@@ -259,7 +283,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.play
-                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.1 * main_container.width)
                 }
             }
 
@@ -271,7 +295,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.pause
-                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.1 * main_container.width)
                 }
             }
 
@@ -283,7 +307,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.skipPrevious
-                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.1 * main_container.width)
                 }
             }
 
@@ -295,7 +319,7 @@ Rectangle {
 
                 background: IconLabel {
                     text: MdiFont.Icon.skipNext
-                    font.pixelSize: Math.min(0.1 * main_container.height, 0.3 * main_container.width)
+                    font.pixelSize: Math.min(0.1 * main_container.height, 0.1 * main_container.width)
                 }
             }
         } // END media_controls_container
@@ -493,7 +517,7 @@ Rectangle {
     // Close any modal windows
     function closeModals() {
         // Check if clickToClose is disabled
-        if (!m_enableClickToClose)
+        if (!Constants.enableClickToClose)
             return
 
         input_selector_modal.visible = false

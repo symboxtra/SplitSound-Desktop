@@ -3,6 +3,8 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.3
 import QtGraphicalEffects 1.0
 import "fonts/Icon.js" as MdiFont
+import "Constants.js" as Constants
+
 
 Rectangle {
     id: modal
@@ -13,7 +15,7 @@ Rectangle {
     radius: 4
     z: 7
 
-    color: m_modalColor
+    color: Constants.modalColor
     visible: false
 
     property int time: -1

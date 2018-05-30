@@ -13,7 +13,7 @@ Item {
     z: 0 // below currently_listening_label
 
     ListModel {
-        id: userModel
+        id: user_model
         ListElement {
             name: "Neel"
             device: "Nexus 6P"
@@ -161,7 +161,7 @@ Item {
     }
 
     Component {
-        id: userDelegate
+        id: user_delegate
 
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -188,10 +188,17 @@ Item {
                 anchors.left: user_icon.right
                 anchors.leftMargin: 5
                 anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignLeft
+
+                width: parent.width - user_icon.width - user_triple_dot.width - user_scrollbar.width
 
                 elide: Text.ElideRight
                 maximumLineCount: 1
                 text: name
+
+                OverflowToolTip {
+                    text: name
+                }
             }
 
             CustomLabel {
@@ -199,11 +206,20 @@ Item {
                 anchors.top: user_name.bottom
                 anchors.left: user_icon.right
                 anchors.leftMargin: user_name.anchors.leftMargin
+                horizontalAlignment: Text.AlignLeft
+
+                width: parent.width - user_icon.width - user_triple_dot.width - user_scrollbar.width
 
                 font.weight: Font.Normal
                 font.pixelSize: 12
+                elide: Text.ElideRight
+                maximumLineCount: 1
 
                 text: device
+
+                OverflowToolTip {
+                    text: device
+                }
             }
 
             IconLabel {
@@ -221,11 +237,30 @@ Item {
         id: currently_listening_list
         anchors.fill: parent
 
-        model: userModel
-        delegate: userDelegate
+        model: user_model
+        delegate: user_delegate
 
-        spacing: 3
+        spacing: 4
 
-        ScrollBar.vertical: ScrollBar { id: user_scrollbar }
+        ScrollBar.vertical: ScrollBar {
+            id: user_scrollbar
+            width: 10
+            stepSize: 0.025
+        }
+
+        Keys.onUpPressed: {
+            user_scrollbar.decrease(0.05);
+        }
+        Keys.onDownPressed: {
+            user_scrollbar.increase(0.05);
+        }
+
+        MouseArea {
+            anchors.fill: parent
+
+            onClicked: {
+                parent.focus = true;
+            }
+        }
     }
 }
