@@ -9,8 +9,11 @@ Rectangle {
     anchors.topMargin: 2
     anchors.bottom: parent.bottom
 
-    width: (sizeToModel) ? Math.min(((server_model.count === 0) ? 1 : server_model.count) * serverDelegateWidth, 0.5 * parent.width) : 0.5 * parent.width
+    width: 0.5 * parent.width
     height: parent.height
+
+    color: parent.color
+    clip: true
 
     CustomLabel {
         anchors.centerIn: parent
@@ -18,34 +21,30 @@ Rectangle {
 
         font.weight: Font.Normal
         font.pixelSize: 12
-        text: "Double-click an entry to join."
+        text: "No available servers."
 
-        visible: server_model.count === 0
+        visible: privateModel.count === 0
     }
 
-    color: parent.color
-
-    property bool sizeToModel: false
+    property var privateModel: ServerListModel {}
     property int serverDelegateWidth: 100
     property int iconSize: 15
 
-
-
     Component {
-        id: server_delegate
+        id: available_server_delegate
 
         Rectangle {
             anchors.top: parent.top
             anchors.topMargin: 3
 
             width: serverDelegateWidth // constant so that expanding brings more into view
-            height: parent.parent.height - server_scrollbar.height - anchors.topMargin
+            height: parent.parent.height - available_server_scrollbar.height - anchors.topMargin
             radius: 4
 
             color: Qt.lighter(Constants.headerFooterColor, 1.7)
 
             IconLabel {
-                id: server_icon
+                id: available_server_icon
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.topMargin: 2
@@ -62,13 +61,13 @@ Rectangle {
             }
 
             CustomLabel {
-                id: server_name
-                anchors.left: server_icon.right
+                id: available_server_name
+                anchors.left: available_server_icon.right
                 anchors.top: parent.top
                 anchors.topMargin: 1
                 horizontalAlignment: Text.AlignLeft
 
-                width: parent.width - server_icon.width
+                width: parent.width - available_server_icon.width
 
                 elide: Text.ElideRight
                 maximumLineCount: 1
@@ -81,7 +80,7 @@ Rectangle {
             }
 
             CustomLabel {
-                id: server_ip
+                id: available_server_ip
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 2
                 anchors.left: parent.left
@@ -96,10 +95,10 @@ Rectangle {
             }
 
             CustomLabel {
-                id: server_people_count
+                id: available_server_people_count
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: server_ip.anchors.bottomMargin
-                anchors.right: server_people_icon.left
+                anchors.bottomMargin: available_server_ip.anchors.bottomMargin
+                anchors.right: available_server_people_icon.left
                 anchors.rightMargin: 3
 
                 text: numUsers
@@ -107,7 +106,7 @@ Rectangle {
             }
 
             IconLabel {
-                id: server_people_icon
+                id: available_server_people_icon
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.rightMargin: 5
@@ -122,8 +121,10 @@ Rectangle {
                 anchors.fill: parent
 
                 onDoubleClicked: {
-                    console.log("Index: " + index)
-                    server_model.remove(index) // TODO: removes from wrong one right now
+                    var obj = available_server_model.get(index)
+                    console.log("Connected to server: " + obj["name"])
+                    joined_server_model.insert(0, obj);
+                    available_server_model.remove(index)
                 }
             }
         }
@@ -133,34 +134,28 @@ Rectangle {
         id: currently_listening_list
         anchors.fill: parent
 
-        model: ServerListModel {
-            id: server_model
-        }
+        model: privateModel
 
-        delegate: server_delegate
+        delegate: available_server_delegate
 
         orientation: ListView.Horizontal
         spacing: 3
 
         ScrollBar.horizontal: ScrollBar {
-            id: server_scrollbar
-            policy: ScrollBar.AlwaysOn
-            height: 8
+            id: available_server_scrollbar
+            policy: ScrollBar.AsNeeded
+            height: 5
             stepSize: 0.025
 
-            visible: server_model.count !== 0
+            visible: privateModel.count !== 0
         }
 
         // Event handlers
         Keys.onLeftPressed: {
-            server_scrollbar.decrease(0.05)
+            available_server_scrollbar.decrease(0.05)
         }
         Keys.onRightPressed: {
-            server_scrollbar.increase(0.05)
-        }
-
-        Keys.onEscapePressed: {
-            server_model.clear()
+            available_server_scrollbar.increase(0.05)
         }
 
         // Shift scrolling
@@ -175,21 +170,18 @@ Rectangle {
 
             onWheel: {
 
-                console.log(server_model.count)
-                console.log(server_delegate.width)
-
                 // Left right scrolling (use trackpad to test)
                 if (wheel.angleDelta.x > 0)
-                    server_scrollbar.decrease();
+                    available_server_scrollbar.decrease();
                 else if (wheel.angleDelta.x < 0)
-                    server_scrollbar.increase();
+                    available_server_scrollbar.increase();
 
                 // Up down scrolling with shift
                 if (wheel.modifiers & Qt.ShiftModifier) {
                     if (wheel.angleDelta.y > 0)
-                        server_scrollbar.decrease();
+                        available_server_scrollbar.decrease();
                     else if (wheel.angleDelta.y < 0)
-                        server_scrollbar.increase();
+                        available_server_scrollbar.increase();
                 }
             }
         }

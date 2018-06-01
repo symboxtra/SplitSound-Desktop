@@ -10,7 +10,7 @@ Item {
     anchors.bottom: parent.bottom
 
     width: parent.width
-    z: 0 // below currently_listening_label
+    clip: true
 
     ListModel {
         id: user_model

@@ -14,6 +14,11 @@ Rectangle {
     Material.theme: Material.Dark
     Material.accent: Constants.accentColor
 
+    // TODO: remove; initial model will usually be empty
+    Component.onCompleted: {
+        joined_server_model.clear();
+    }
+
     ServerSearch {
         id: server_search
         visible: false
@@ -49,7 +54,6 @@ Rectangle {
             height: 0.08 * parent.height
 
             color: Constants.leftPanelColor
-            z: 2
 
             CustomLabel {
                 id: currently_listening_text
@@ -158,11 +162,14 @@ Rectangle {
 
         color: Constants.headerFooterColor
 
-        ServerList {
+        ServerListJoined {
             id: joined_servers
             anchors.left: parent.left
             sizeToModel: true
-            z: 1
+
+            privateModel: ServerListModel {
+                id: joined_server_model
+            }
         }
 
         Rectangle {
@@ -179,17 +186,21 @@ Rectangle {
                 anchors.centerIn: parent
 
                 width: 3
-                height: parent.height
+                height: parent.height - 5
                 radius: 4
+
+                color: Qt.lighter(Constants.scrollBarColor, 1.3)
             }
         }
 
-        ServerList {
+        ServerListAvailable {
             id: available_servers
             anchors.left: server_divider.right
             width: parent.width - joined_servers.width
 
-            z: 0
+            privateModel: ServerListModel {
+                id: available_server_model
+            }
         }
     }
 

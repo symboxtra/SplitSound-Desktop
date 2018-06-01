@@ -12,9 +12,10 @@
         <file>CustomProgressBar.qml</file>
         <file>HoverToolTip.qml</file>
         <file>UserList.qml</file>
-        <file>ServerList.qml</file>
+        <file>ServerListJoined.qml</file>
         <file>OverflowToolTip.qml</file>
         <file>Constants.js</file>
         <file>ServerListModel.qml</file>
+        <file>ServerListAvailable.qml</file>
     </qresource>
 </RCC>
