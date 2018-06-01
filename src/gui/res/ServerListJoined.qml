@@ -9,7 +9,7 @@ Rectangle {
     anchors.topMargin: 2
     anchors.bottom: parent.bottom
 
-    width: (sizeToModel) ? Math.min(((privateModel.count === 0) ? 1 : privateModel.count) * serverDelegateWidth, 0.5 * parent.width) : 0.5 * parent.width
+    width: 0.5 * parent.width
     height: parent.height
 
     color: parent.color

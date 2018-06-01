@@ -163,7 +163,7 @@ Rectangle {
         color: Constants.headerFooterColor
 
         ServerListJoined {
-            id: joined_servers
+            id: joined_server
             anchors.left: parent.left
             sizeToModel: true
 
@@ -175,7 +175,7 @@ Rectangle {
         Rectangle {
             id: server_divider
             anchors.top: parent.top
-            anchors.left: joined_servers.right
+            anchors.left: joined_server.right
 
             height: parent.height
 
@@ -191,12 +191,48 @@ Rectangle {
 
                 color: Qt.lighter(Constants.scrollBarColor, 1.3)
             }
-        }
+
+            MouseArea {
+                anchors.centerIn: parent
+                propagateComposedEvents: true
+
+                // Extend outside parent
+                width: parent.width + 5
+                height: parent.height + 5
+
+                cursorShape: Qt.SizeHorCursor
+
+                onClicked: {
+                    mouse.accepted = false
+                }
+
+                onDoubleClicked: {
+                    joined_server.width = 0.5 * joined_server.parent.width
+                }
+
+                drag{ target: parent; axis: Drag.XAxis }
+                onMouseXChanged: {
+                    if (drag.active){
+                        // Only need to resize joined because available depends on joined
+                        joined_server.width = joined_server.width + mouseX / 2
+
+                        var margin = 10
+                        // Lock min at 1 delegate
+                        if (joined_server.width < joined_server.serverDelegateWidth + margin)
+                            joined_server.width = joined_server.serverDelegateWidth + margin
+
+                        // Lock max at 1 delegate
+                        if (joined_server.width > joined_server.parent.width - joined_server.serverDelegateWidth - margin)
+                            joined_server.width = joined_server.parent.width - joined_server.serverDelegateWidth - margin
+                    }
+                }
+            }
+        } // END server_divider
 
         ServerListAvailable {
-            id: available_servers
+            id: available_server
             anchors.left: server_divider.right
-            width: parent.width - joined_servers.width
+            width: parent.width - joined_server.width
 
             privateModel: ServerListModel {
                 id: available_server_model
