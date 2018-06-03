@@ -5,9 +5,6 @@ Modal {
 
     visible: true
     message: "" // Override warning message
-    allowClose: true
-    useClickBlocker: true
-    useBackgroundFilter: true
 
     width: 0.8 * parent.width
     height: 0.5 * parent.height

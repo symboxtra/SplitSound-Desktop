@@ -5,10 +5,10 @@ import QtGraphicalEffects 1.0
 import "fonts/Icon.js" as MdiFont
 import "Constants.js" as Constants
 
-
 Rectangle {
     id: main_container
     anchors.fill: parent
+    clip: true
 
     color: "transparent"
     Material.theme: Material.Dark
@@ -17,6 +17,11 @@ Rectangle {
     // TODO: remove; initial model will usually be empty
     Component.onCompleted: {
         joined_server_model.clear();
+    }
+
+    Settings {
+        id: settings_modal
+        visible: false
     }
 
     ServerSearch {
@@ -40,7 +45,6 @@ Rectangle {
 
             onClicked: {
                 parent.focus = true // Switch focus for key events
-                closeModals()
                 console.log("left panel clicked")
             }
         }
@@ -146,7 +150,6 @@ Rectangle {
 
             onClicked: {
                 parent.focus = true // Switch focus for key events
-                closeModals()
                 console.log("right panel clicked")
             }
         }
@@ -371,97 +374,15 @@ Rectangle {
             }
         } // END media_controls_container
 
-        Modal {
+        InputSettings {
             id: input_selector_modal
-            anchors.centerIn: undefined // Override default centering
-            anchors.right: footer.right
-            anchors.rightMargin: volume_slider.width - 25
-            anchors.bottom: footer.top
-            anchors.bottomMargin: 1
+            parent: parent
 
-            width: 0.4 * main_container.width
-            height: 0.5 * main_container.height
-
-            message: "" // Override warning message
+            modal: false
             showCloseButton: false
-
-            // Must be before other clickable elements (z-index lower)
-            MouseArea {
-                anchors.fill: parent
-                propagateComposedEvents: true // Allow clicks to propogate
-            }
-
-            CustomLabel {
-                id: input_selector_combo_label
-                anchors.left: input_selector_modal.left
-                anchors.leftMargin: 5
-                anchors.verticalCenter: input_selector_combo.verticalCenter
-
-                text: "Input: "
-            }
-
-            ComboBox {
-                id: input_selector_combo
-                anchors.left: input_selector_combo_label.right
-
-                width: parent.width - input_selector_combo_label.width - 10
-
-                HoverToolTip {
-                    text: "Select the device you would like to share"
-                }
-            }
-
-            CustomLabel {
-                id: input_selector_muted_label
-                anchors.left: input_selector_modal.left
-                anchors.leftMargin: 5
-                anchors.verticalCenter: input_selector_muted_check.verticalCenter
-
-                text: "Transmit: "
-            }
-
-            CheckBox {
-                id: input_selector_muted_check
-                anchors.left: input_selector_muted_label.right
-                anchors.top: input_selector_combo.bottom
-
-                HoverToolTip {
-                    text: "Enable transmission to other devices"
-                }
-            }
-
-            Button {
-                id: input_add_stream_button
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                anchors.margins: 5
-
-                background: IconLabel {
-                    text: MdiFont.Icon.plusCircle
-                }
-
-                HoverToolTip {
-                    text: "Share an additional audio stream"
-                }
-
-                onClicked: {
-                    console.log("add stream")
-                }
-            }
-
-        } // END input_selector_modal
-
-        // input_selector_modal drop shadow
-        DropShadow {
-            anchors.fill: input_selector_modal
-            horizontalOffset: 1
-            verticalOffset: 2
-            radius: 8.0
-            samples: 17
-            color: "#80000000"
-            source: input_selector_modal
-
-            visible: input_selector_modal.visible
+            customDim: false
+            blockClicks: false
+            z: 0 // level with other elements
         }
 
         // Modal trigger and volume slider
@@ -484,6 +405,7 @@ Rectangle {
 
                 onClicked: {
                     console.log("Settings opened")
+                    settings_modal.visible = !settings_modal.visible
                 }
 
                 HoverToolTip {
@@ -536,10 +458,10 @@ Rectangle {
     }
 
     function displayDialog(title, message, button1, button2) {
-        customDialog(title, message, button1, button2, -1, true)
+        customDialog(title, message, button1, button2, Popup.CloseOnEscape | Popup.CloseOnPressOutside)
     }
 
-    function customDialog(title, message, button1, button2, time, allowClose) {
+    function customDialog(title, message, button1, button2, closePolicy) {
         var dialog = Qt.createQmlObject("DefaultDialog {}", main_container)
 
         if (dialog == null) {
@@ -550,25 +472,11 @@ Rectangle {
         dialog.dynamic = true
         dialog.visible = true
         dialog.focus = true
-        dialog.time = time
         dialog.title = title
         dialog.message = message
-        dialog.allowClose = allowClose
+        dialog.closePolicy = closePolicy
         dialog.button1Text = button1
         dialog.button2Text = button2
-
-        if (time !== -1)
-            dialog.closeSelf() // Trigger timer
-    }
-
-    // Close any modal windows
-    function closeModals() {
-        // Check if clickToClose is disabled
-        if (!Constants.enableClickToClose)
-            return
-
-        input_selector_modal.visible = false
-        input_selector_modal.focus = false
     }
 
 } // END main_container

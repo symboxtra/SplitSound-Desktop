@@ -8,4 +8,6 @@ ToolTip {
 
     delay: 1000
     timeout: 5000
+
+    z: parent.z // prevent going beneath parents with high z
 }

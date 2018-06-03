@@ -5,40 +5,47 @@ import QtGraphicalEffects 1.0
 import "fonts/Icon.js" as MdiFont
 import "Constants.js" as Constants
 
-
-Rectangle {
+Popup {
     id: modal
-    anchors.centerIn: parent
+
+    Material.theme: parent.Material.theme
+    Material.accent: parent.Material.accent
+
+    x: (parent.width - width) / 2 // Center
+    y: (parent.height - height) / 2
 
     width: 0.3 * main_container.width
     height: 0.4 * main_container.height
-    radius: 4
+
+    background: Rectangle {
+        color: Constants.modalColor
+        radius: 4
+    }
+
+    visible: false
+    dim: false // dims with white; doesn't look good
     z: 7
 
-    color: Constants.modalColor
-    visible: false
+    modal: true
 
-    property int time: -1
     property bool dynamic: false
-    property bool allowClose: true
     property bool showCloseButton: true
-    property bool useClickBlocker: false
-    property bool useBackgroundFilter: false
-    property string title: ""
-    property string message: "Remember to add this modal to the closeModals function if you want it to auto-close when clicking outside of it.\n
-                                     Assign \"\" to message to stop showing this."
+    property bool customDim: true
+    property bool blockClicks: false // interferes with Popup.closeOnPressOutside
 
-    // Background filter and click blocker
+    property string title: ""
+    property string message: ""
+
     Rectangle {
         id: background_filter
 
-        visible: useBackgroundFilter
+        visible: customDim
 
-        // Position outside of parent
-        x: 0 - parent.x
-        y: 0 - parent.y
-        width: main_container.width
-        height: main_container.height
+        // Extend outside of parent
+        x: 0 - parent.parent.x - 50 // parent is contentItem; parent.parent is Popup
+        y: 0 - parent.parent.y - 50
+        width: main_container.width + 50
+        height: main_container.height + 50
 
         color: "black"
         opacity: 0.5
@@ -48,14 +55,14 @@ Rectangle {
     MouseArea {
         id: click_blocker
 
-        enabled: useClickBlocker
-        hoverEnabled: useClickBlocker
+        enabled: blockClicks
+        hoverEnabled: true // Qt bug: prevent hover events from messing up Popup click handler
 
-        // Position outside of parent
-        x: 0 - parent.x
-        y: 0 - parent.y
-        width: main_container.width
-        height: main_container.height
+        // Extend outside of parent
+        x: 0 - parent.parent.x - 50 // parent is contentItem; parent.parent is Popup
+        y: 0 - parent.parent.y - 50
+        width: main_container.width + 50
+        height: main_container.height + 50
 
         onClicked: {
             console.log("click_blocker clicked")
@@ -81,25 +88,6 @@ Rectangle {
         text: message
     }
 
-    // Must be before other clickable elements (z-index lower)
-    MouseArea {
-        anchors.fill: parent
-        propagateComposedEvents: true // Allow clicks to propogate using mouse.accepted = false
-
-        onClicked: {
-            parent.focus = true // Switch focus for key events
-            console.log("default modal handler clicked -- not propogating")
-        }
-    }
-
-    Keys.onPressed: {
-        if (allowClose && (event.key === Qt.Key_Escape) && (!event.modifiers))
-        {
-            console.log("escape pressed in modal")
-            closeSelf()
-        }
-    }
-
     // close button (x)
     Button {
         id: upper_close_button
@@ -107,7 +95,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 5
 
-        visible: allowClose && showCloseButton
+        visible: showCloseButton
 
         background: IconLabel {
             text: MdiFont.Icon.closeCircleOutline
@@ -120,12 +108,8 @@ Rectangle {
         }
     }
 
-
-
     function closeSelf() {
-        if (dynamic && time != -1)
-            destroy(time)
-        else if (dynamic)
+        if (dynamic)
             destroy()
         else {
             visible = false

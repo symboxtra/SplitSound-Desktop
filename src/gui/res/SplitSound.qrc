@@ -17,5 +17,7 @@
         <file>Constants.js</file>
         <file>ServerListModel.qml</file>
         <file>ServerListAvailable.qml</file>
+        <file>Settings.qml</file>
+        <file>InputSettings.qml</file>
     </qresource>
 </RCC>

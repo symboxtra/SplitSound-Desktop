@@ -27,6 +27,8 @@ MouseArea {
         delay: 1000
         timeout: 5000
         text: mouseArea.text
+
+        z: parent.z // prevent going beneath parents with high z
     }
 }
 
