@@ -8,6 +8,7 @@ Rectangle {
     anchors.top: parent.top
     anchors.topMargin: 2
     anchors.bottom: parent.bottom
+    anchors.leftMargin: 4
 
     width: 0.5 * parent.width
     height: parent.height
@@ -28,7 +29,7 @@ Rectangle {
 
     property var privateModel: ServerListModel {}
     property bool sizeToModel: false
-    property int serverDelegateWidth: 100
+    property int serverDelegateWidth: Constants.serverDelegateWidth
     property int iconSize: 15
 
     Component {
@@ -87,35 +88,54 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 2
 
+                width: parent.width - joined_server_people_container.width
+                horizontalAlignment: Text.AlignLeft
+
                 font.weight: Font.Normal
                 font.pixelSize: 9
 
                 visible: true
+                elide: Text.ElideRight
 
                 text: ip
+
+                OverflowToolTip {
+                    text: ip
+                }
             }
 
-            CustomLabel {
-                id: joined_server_people_count
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: joined_server_ip.anchors.bottomMargin
-                anchors.right: joined_server_people_icon.left
-                anchors.rightMargin: 3
-
-                text: numUsers
-                font.pixelSize: iconSize - 6
-            }
-
-            IconLabel {
-                id: joined_server_people_icon
+            Rectangle {
+                id: joined_server_people_container
+                anchors.top: joined_server_name.bottom
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.rightMargin: 5
 
-                text: MdiFont.Icon.accountMultiple
+                width: joined_server_people_count.width + joined_server_people_icon.width + 7
 
-                clickable: false
-                font.pixelSize: iconSize
+                color: parent.color
+
+                CustomLabel {
+                    id: joined_server_people_count
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: joined_server_ip.anchors.bottomMargin
+                    anchors.right: joined_server_people_icon.left
+                    anchors.rightMargin: 3
+
+                    text: numUsers
+                    font.pixelSize: iconSize - 6
+                }
+
+                IconLabel {
+                    id: joined_server_people_icon
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+
+                    text: MdiFont.Icon.accountMultiple
+
+                    clickable: false
+                    font.pixelSize: iconSize
+                }
             }
 
             MouseArea {

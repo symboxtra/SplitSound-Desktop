@@ -10,3 +10,5 @@ var scrollBarColor = "#595959";
 var showToolTips = true;
 var enableClickToClose = true;
 
+var serverDelegateWidth = 105;
+

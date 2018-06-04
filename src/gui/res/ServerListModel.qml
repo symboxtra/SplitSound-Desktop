@@ -6,7 +6,7 @@ ListModel {
         name: "long server name"
         ip: "192.168.1.101"
         locked: true
-        numUsers: 13
+        numUsers: 4
     }
     ListElement {
         name: "Jeff"
@@ -18,7 +18,7 @@ ListModel {
         name: "Raul"
         ip: "192.168.1.103"
         locked: true
-        numUsers: 12
+        numUsers: 1300002
     }
     ListElement {
         name: "Paul"
