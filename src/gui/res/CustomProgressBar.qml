@@ -1,3 +1,7 @@
+/**
+ *  Created by Jack McKernan on 5/20/2018.
+ */
+
 import QtQuick 2.7
 import "Constants.js" as Constants
 

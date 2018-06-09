@@ -1,4 +1,8 @@
-import QtQuick 2.0
+/**
+ *  Created by Jack McKernan on 5/29/2018.
+ */
+
+import QtQuick 2.7
 
 ListModel {
     id: server_model

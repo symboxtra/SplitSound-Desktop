@@ -1,3 +1,6 @@
+/**
+ *  Created by Jack McKernan on 5/29/2018.
+ */
 
 var accentColor = "#C36037";
 var accentColorDark = "#8A3714";

@@ -1,3 +1,7 @@
+/**
+ *  Created by Jack McKernan on 5/8/2018.
+ */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Material 2.3
@@ -304,7 +308,9 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
 
                 background: IconLabel {
-                    text: MdiFont.Icon.cellphoneLinkOff
+                    //text: MdiFont.Icon.cellphoneLinkOff
+                    text: MdiFont.Icon.lanDisconnect
+                    hoverColor: Material.color(Material.Red)
                 }
 
                 HoverToolTip {

@@ -19,5 +19,6 @@
         <file>ServerListAvailable.qml</file>
         <file>Settings.qml</file>
         <file>InputSettings.qml</file>
+        <file>SettingsRow.qml</file>
     </qresource>
 </RCC>

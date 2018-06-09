@@ -1,3 +1,7 @@
+/**
+ *  Created by Jack McKernan on 5/8/2018.
+ */
+
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 

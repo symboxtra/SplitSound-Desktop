@@ -1,3 +1,7 @@
+/**
+ *  Created by Jack McKernan on 5/8/2018.
+ */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Material 2.3
@@ -9,11 +13,13 @@ Text {
 
     verticalAlignment: Text.AlignVCenter
 
-    color: "white"
-
     property bool clickable: true
+    property string initialColor: "white"
+    property string hoverColor: initialColor
     property real initialOpacity: 0.85
     property real hoverOpacity: 0.6
+
+    color: initialColor
     opacity: initialOpacity
 
     MouseArea {
@@ -33,11 +39,17 @@ Text {
         // Hover controls
         onEntered: {
             if (clickable)
+            {
+                parent.color = hoverColor
                 parent.opacity = hoverOpacity
+            }
         }
         onExited: {
             if (clickable)
+            {
+                parent.color = initialColor
                 parent.opacity = initialOpacity
+            }
         }
     }
 }

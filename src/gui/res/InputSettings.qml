@@ -1,3 +1,7 @@
+/**
+ *  Created by Jack McKernan on 6/2/2018.
+ */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import "fonts/Icon.js" as MdiFont

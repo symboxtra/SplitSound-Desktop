@@ -1,3 +1,7 @@
+/**
+ *  Created by Jack McKernan on 5/19/2018.
+ */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.3
@@ -93,13 +97,12 @@ Popup {
         id: upper_close_button
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.margins: 5
 
         visible: showCloseButton
 
         background: IconLabel {
             text: MdiFont.Icon.closeCircleOutline
-            color: Material.color(Material.Red)
+            initialColor: Material.color(Material.Red)
             opacity: 0.7
         }
 

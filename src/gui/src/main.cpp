@@ -1,3 +1,7 @@
+/**
+ *  Created by Jack McKernan on 5/8/2018.
+ */
+
 #include <QQuickStyle>
 #include <QFontDatabase>
 #include <QQmlDebuggingEnabler>
