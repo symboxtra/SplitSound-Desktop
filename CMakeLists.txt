@@ -158,6 +158,7 @@ if (WIN32)
     qt5_copy_dll(splitsound Qml)
     qt5_copy_dll(splitsound Quick)
     qt5_copy_dll(splitsound QuickControls2)
+    qt5_copy_dll(splitsound QuickTemplates2d)
 
 
 else ()
