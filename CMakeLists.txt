@@ -144,6 +144,7 @@ macro (add_sources)
 endmacro()
 
 add_subdirectory(src/gui)
+add_subdirectory(src/net)
 
 # Add executable
 if (WIN32)
@@ -158,7 +159,6 @@ if (WIN32)
     qt5_copy_dll(splitsound Qml)
     qt5_copy_dll(splitsound Quick)
     qt5_copy_dll(splitsound QuickControls2)
-    qt5_copy_dll(splitsound QuickTemplates2d)
 
 
 else ()
@@ -208,6 +208,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
         ${PROJECT_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
         ${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
         ${PROJECT_SOURCE_DIR}/src/gui/src
+		${PROJECT_SOURCE_DIR}/src/net
     )
 
     # Collect all test source files
