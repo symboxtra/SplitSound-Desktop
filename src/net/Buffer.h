@@ -2,6 +2,8 @@
 #define BUFFER
 
 #include <string>
+#include <mutex>
+#include <condition_variable>
 #include <thread>
 #include <iostream>
 #include <deque>
@@ -21,7 +23,7 @@ class Buffer
 		void add(T val, int ssrc = 0)
 		{
 			unique_lock<mutex> locker(mutexLock);
-			aryList.push_back(make_pair(val, ssrc));
+			bufferList.push_back(make_pair(val, ssrc));
 			locker.unlock();
 			cond.notify_one();
 
@@ -32,7 +34,7 @@ class Buffer
 		{
 			pair<T, int> temp;
 			unique_lock<mutex> locker(mutexLock);
-			temp = aryList[index];
+			temp = bufferList[index];
 			locker.unlock();
 			cond.notify_one();
 
@@ -42,8 +44,8 @@ class Buffer
 		pair<T, int> getNext()
 		{
 			unique_lock<mutex> locker(mutexLock);
-			pair<T, int> back = aryList.back();
-			buffer.pop_back();
+			pair<T, int> back = bufferList.back();
+			bufferList.pop_back();
 			locker.unlock();
 			cond.notify_one();
 
@@ -59,6 +61,6 @@ class Buffer
 
 			return empt;
 		}
-}
+};
 
 #endif

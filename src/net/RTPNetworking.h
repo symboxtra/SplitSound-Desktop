@@ -1,21 +1,32 @@
+#ifndef RTP_NETWORKING
+#define RTP_NETWORKING
+
 #include <iostream>
 #include <thread>
 #include <string>
+#include <boost/thread.hpp>
+
+#include "Buffer.h"
 
 using namespace std;
-using namespace jrtplib;
+
+enum class AppPacket {LIST_ALL, INFO, LOGIN, ACCEPT, SR, RR, BYE};
 
 class RTPNetworking
 {
 
 	private:
-		final int RTPPort = 6004;
-		final int RTCPPort = 8000;
+		const int RTPPort = 6004;
+		const int RTCPPort = 8000;
+
+
 
 	public:
+		static const Buffer<AppPacket> requestQ();
+
 		RTPNetworking()
 		{
-			tThread = boost::thread(&RTPNetworking::setup, this);
+			boost::thread(&RTPNetworking::setup, this);
 		}
 		
 		void setup()
@@ -24,7 +35,7 @@ class RTPNetworking
 
 				int status;
 
-				RTPUDPv4TransmissionParams transparams;
+			/*	RTPUDPv4TransmissionParams transparams;
 				RTPSessionsParams sessParams;
 				RTPSession sess;
 
@@ -34,7 +45,7 @@ class RTPNetworking
 
 				status = sess.Create(sessParams, &transParams);
 				checkError(status);
-
+			*/
 
 
 				
@@ -48,8 +59,10 @@ class RTPNetworking
 		{
 			if(err < 0)
 			{
-				cout << "ERROR: " << RTPGetErrorString(err) << endl;
+				//cout << "ERROR: " << RTPGetErrorString(err) << endl;
 				exit(-1);
 			}
 		}
-}
+};
+
+#endif
