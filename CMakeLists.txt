@@ -39,8 +39,6 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 endforeach ()
 
 
-
-
 ######## Dependencies and Libs ########
 
 message(STATUS "\nBuilding required dependency JThread...\n")
@@ -63,8 +61,20 @@ endif()
 
 # Add JRTPLIB
 set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/lib)
-add_subdirectory(src/libs/jrtplib)
-include_directories(${CMAKE_BINARY_DIR}/src/libs/jrtplib/src) # Include generated headers
+MESSAGE(STATUS "\nBuilding JRTPLIB dependency...\n")
+
+# Manually cmake and install JRTPLIB
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jrtplib)
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
+)
+execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
+)
+MESSAGE(STATUS "\nBuilt and installed JRTPLIB\n")
+
+include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated headers
+
 
 ######## Boost ########
 
@@ -73,22 +83,22 @@ set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_STATIC_RUNTIME OFF)
 set (Boost_ALL_DYN_LINK OFF)
 set (Boost_USE_DEBUG_LIBS ON)
+set (BOOST_LIBRARYDIR ${BOOST_ROOT}/lib64-msvc14.1)
 
-set (BOOST_ROOT $ENV{BOOST})
 if (NOT DEFINED BOOST_ROOT)
 	if(DEFINED ENV{BOOST})
 		set (BOOST_ROOT $ENV{BOOST} CACHE STRING "Path to Boost installation")
 	endif()
 endif()
 MESSAGE(STATUS "BOOST_ROOT: " ${BOOST_ROOT} "\n")
-set (BOOST_LIBRARYDIR ${BOOST_ROOT}/lib64-msvc14.1)
+
 # Required Boost packages
 find_package(Boost REQUIRED
 	system
 	filesystem
 	thread
+	date_time
 )
-MESSAGE(STATUS "Boost_LIBRARIES: " ${Boost_LIBRARIES} "\n")
 
 
 ######## Qt ########
@@ -196,7 +206,7 @@ target_link_libraries(splitsound
     Qt5::Qml
     Qt5::Quick
     Qt5::QuickControls2
-	${BOOST_LIBRARY_DIR}
+	${Boost_LIBRARIES}
 )
 
 # Turn off coverage flags

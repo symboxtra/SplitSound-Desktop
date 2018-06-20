@@ -5,10 +5,13 @@
 #include <thread>
 #include <string>
 #include <boost/thread.hpp>
+#include <jthread/jthread.h>
+#include <jrtplib3/rtpsession.h>
 
 #include "Buffer.h"
 
 using namespace std;
+//using namespace jrtplib;
 
 enum class AppPacket {LIST_ALL, INFO, LOGIN, ACCEPT, SR, RR, BYE};
 
@@ -32,7 +35,7 @@ class RTPNetworking
 		void setup()
 		{
 			try {
-
+			
 				int status;
 
 			/*	RTPUDPv4TransmissionParams transparams;
@@ -45,9 +48,9 @@ class RTPNetworking
 
 				status = sess.Create(sessParams, &transParams);
 				checkError(status);
+
+				cout << "Temp\n" << endl;
 			*/
-
-
 				
 			}catch(boost::thread_interrupted& inter){
 				
