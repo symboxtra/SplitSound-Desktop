@@ -45,7 +45,7 @@ git submodule update --init --recursive
 
 ## Branching ##
 
-Every feature/line of development should have it's own branch. 
+Every feature/line of development should have its own branch. 
 Unless you know what you're doing, this branch should typically be a direct child of the `master` branch (see example below).
 Releases accumulate in release branches before being merged into master.
 
