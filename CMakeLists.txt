@@ -21,6 +21,12 @@ endif ()
 # Ensure libraries are installed correctly on all platforms
 # include(GNUInstallDirs)
 
+if (WIN32)
+	set (SS_LIBRARIES wsock32 ws2_32 iphlpapi ${CMAKE_THREAD_LIBS_INIT})
+else()
+	set (SS_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
 # Disable coverage flags by default
 option(SS_ADD_COVERAGE_FLAGS "Add coverage options to compiler flags" OFF)
 if (CMAKE_BUILD_TYPE MATCHES "Debug" AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -100,6 +106,9 @@ find_package(Boost REQUIRED
 	date_time
 )
 
+include_directories(${Boost_INCLUDE_DIRS})
+set(SS_LIBRAIES ${SS_LIBRARIES} ${Boost_LIBRARIES})
+
 
 ######## Qt ########
 
@@ -146,6 +155,17 @@ find_package(Qt5 REQUIRED
     Qml
     Quick
     QuickControls2
+)
+
+set (SS_LIBRARIES 
+		${SS_LIBRARIES}
+		Qt5::Core
+		Qt5::Widgets
+		Qt5::Gui
+		Qt5::Network
+		Qt5::Qml
+		Qt5::Quick
+		Qt5::QuickControls2
 )
 
 
@@ -198,16 +218,7 @@ else ()
 endif ()
 
 # Link Qt
-target_link_libraries(splitsound
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Network
-    Qt5::Qml
-    Qt5::Quick
-    Qt5::QuickControls2
-	${Boost_LIBRARIES}
-)
+target_link_libraries(splitsound ${SS_LIBRARIES})
 
 # Turn off coverage flags
 set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")
@@ -240,7 +251,6 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
         ${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
         ${PROJECT_SOURCE_DIR}/src/gui/src
 		${PROJECT_SOURCE_DIR}/src/net
-		${Boost_INCLUDE_DIRS}
     )
 
     # Collect all test source files
@@ -258,8 +268,8 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     foreach(_test_file ${TEST_SRC_FILES})
         get_filename_component(_test_name ${_test_file} NAME_WE)
         add_executable(${_test_name} ${_test_file})
-        target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES})
-        add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
+		target_link_libraries(${_test_name} ${SS_LIBRARIES} gtest gtest_main)
+		add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
         set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
     endforeach()
 
