@@ -50,7 +50,7 @@ install:
             qmake -v
             echo "Installed Qt 5.10.1"
 
-            sudo apt install libboost-dev
+            sudo apt install libboost-all-dev
         fi
 
 before_script:

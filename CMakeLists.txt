@@ -66,7 +66,29 @@ set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/lib)
 add_subdirectory(src/libs/jrtplib)
 include_directories(${CMAKE_BINARY_DIR}/src/libs/jrtplib/src) # Include generated headers
 
+######## Boost ########
 
+set (Boost_USE_MULTITHREADED ON)
+set (Boost_USE_STATIC_LIBS ON)
+set (Boost_USE_STATIC_RUNTIME OFF)
+set (Boost_ALL_DYN_LINK OFF)
+set (Boost_USE_DEBUG_LIBS ON)
+
+set (BOOST_ROOT $ENV{BOOST})
+if (NOT DEFINED BOOST_ROOT)
+	if(DEFINED ENV{BOOST})
+		set (BOOST_ROOT $ENV{BOOST} CACHE STRING "Path to Boost installation")
+	endif()
+endif()
+MESSAGE(STATUS "BOOST_ROOT: " ${BOOST_ROOT} "\n")
+set (BOOST_LIBRARYDIR ${BOOST_ROOT}/lib64-msvc14.1)
+# Required Boost packages
+find_package(Boost REQUIRED
+	system
+	filesystem
+	thread
+)
+MESSAGE(STATUS "Boost_LIBRARIES: " ${Boost_LIBRARIES} "\n")
 
 
 ######## Qt ########
@@ -115,8 +137,6 @@ find_package(Qt5 REQUIRED
     Quick
     QuickControls2
 )
-
-
 
 
 ######## Executable ########
@@ -176,6 +196,7 @@ target_link_libraries(splitsound
     Qt5::Qml
     Qt5::Quick
     Qt5::QuickControls2
+	${BOOST_LIBRARY_DIR}
 )
 
 # Turn off coverage flags
@@ -209,6 +230,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
         ${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
         ${PROJECT_SOURCE_DIR}/src/gui/src
 		${PROJECT_SOURCE_DIR}/src/net
+		${Boost_INCLUDE_DIRS}
     )
 
     # Collect all test source files
@@ -226,7 +248,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     foreach(_test_file ${TEST_SRC_FILES})
         get_filename_component(_test_name ${_test_file} NAME_WE)
         add_executable(${_test_name} ${_test_file})
-        target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES})
         add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
         set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
     endforeach()

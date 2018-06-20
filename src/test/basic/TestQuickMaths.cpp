@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "Test.h"
+#include "RTPNetworking.h"
 
 TEST(TestQuickMaths, basicMath_canAdd)
 {
