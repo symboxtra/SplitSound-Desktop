@@ -22,7 +22,7 @@ endif ()
 # include(GNUInstallDirs)
 
 if (WIN32)
-	set (SS_LIBRARIES wsock32 ws2_32 iphlpapi ${CMAKE_THREAD_LIBS_INIT})
+	set (SS_LIBRARIES wsock32 ws2_32 "iphlpapi;")
 else()
 	set (SS_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 endif()
@@ -51,7 +51,7 @@ message(STATUS "\nBuilding required dependency JThread...\n")
 
 # Manually cmake and install JThread (required for JRTPLIB)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -A x86 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
 )
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -71,7 +71,7 @@ MESSAGE(STATUS "\nBuilding JRTPLIB dependency...\n")
 
 # Manually cmake and install JRTPLIB
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jrtplib)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib -A x86 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
 )
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -80,6 +80,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
 MESSAGE(STATUS "\nBuilt and installed JRTPLIB\n")
 
 include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated headers
+set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
 
 
 ######## Boost ########
@@ -107,7 +108,7 @@ find_package(Boost REQUIRED
 )
 
 include_directories(${Boost_INCLUDE_DIRS})
-set(SS_LIBRAIES ${SS_LIBRARIES} ${Boost_LIBRARIES})
+set(SS_LIBRARIES ${SS_LIBRARIES} ${Boost_LIBRARIES})
 
 
 ######## Qt ########
@@ -268,7 +269,8 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     foreach(_test_file ${TEST_SRC_FILES})
         get_filename_component(_test_name ${_test_file} NAME_WE)
         add_executable(${_test_name} ${_test_file})
-		target_link_libraries(${_test_name} ${SS_LIBRARIES} gtest gtest_main)
+		target_link_libraries(${_test_name} ${SS_LIBRARIES} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+		MESSAGE (STATUS "Libs: ${SS_LIBRARIES}")
 		add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
         set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
     endforeach()

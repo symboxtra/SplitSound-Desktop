@@ -4,14 +4,21 @@
 #include <iostream>
 #include <thread>
 #include <string>
+
 #include <boost/thread.hpp>
+
 #include <jthread/jthread.h>
 #include <jrtplib3/rtpsession.h>
+#include <jrtplib3/rtpudpv4transmitter.h>
+#include <jrtplib3/rtpipv4address.h>
+#include <jrtplib3/rtpsessionparams.h>
+#include <jrtplib3/rtperrors.h>
+#include <jrtplib3/rtplibraryversion.h>
 
 #include "Buffer.h"
 
 using namespace std;
-//using namespace jrtplib;
+using namespace jrtplib;
 
 enum class AppPacket {LIST_ALL, INFO, LOGIN, ACCEPT, SR, RR, BYE};
 
@@ -38,11 +45,11 @@ class RTPNetworking
 			
 				int status;
 
-			/*	RTPUDPv4TransmissionParams transparams;
-				RTPSessionsParams sessParams;
-				RTPSession sess;
+				RTPUDPv4TransmissionParams transparams;
+				//RTPSessionParams sessParams;
+				//RTPSession sess;
 
-				sessParams.SetOwnTimeStampUnit(1.0 / 44100.0);
+			/*	sessParams.SetOwnTimeStampUnit(1.0 / 44100.0);
 				sessParams.SetAcceptOwnPackets(true);
 				transParams.setPortbase(RTPPort);
 
