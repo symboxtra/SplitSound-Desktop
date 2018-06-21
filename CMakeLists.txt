@@ -51,7 +51,7 @@ message(STATUS "\nBuilding required dependency JThread...\n")
 
 # Manually cmake and install JThread (required for JRTPLIB)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -A x86 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
 )
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -71,7 +71,7 @@ MESSAGE(STATUS "\nBuilding JRTPLIB dependency...\n")
 
 # Manually cmake and install JRTPLIB
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jrtplib)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib -A x86 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
 )
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -92,6 +92,8 @@ set (Boost_ALL_DYN_LINK OFF)
 set (Boost_USE_DEBUG_LIBS ON)
 if (NOT DEFINED BOOST_LIBRARYDIR)
 	set (BOOST_LIBRARYDIR ${BOOST_ROOT}/lib64-msvc14.1)
+endif()
+MESSAGE (STATUS "Boost Lib Dir: ${BOOST_LIBRARYDIR}")
 
 if (NOT DEFINED BOOST_ROOT)
 	if(DEFINED ENV{BOOST})
