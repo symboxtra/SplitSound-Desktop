@@ -84,7 +84,14 @@ With a Qt installation, CMake, and the compiler of your choice, we hope there sh
 ### Environment ###
 
 Our CMake build is compatible with the Qt Creator IDE, which provides nice auto-complete and debugging tools.
-Select the root `CMakeList.txt` when opening the project.
+Select the root `CMakeList.txt` when opening the project. 
+It's sometimes easiest to build once from the command line and then import that configured build.
+Qt Creator flips out a little bit when trying to generate the fresh CMake itself.
+
+If the project doesn't build on Windows, check the `Build Steps` section under the `Projects` tab in the left navigation bar. The command should be `cmake.exe --build . --target ALL_BUILD` or simply `cmake --build .`.
+
+More instructions and pictures should be coming soon.
+
 
 [CMake Installation and Support for all Platforms](http://cgold.readthedocs.io/en/latest/first-step/installation.html)
 
@@ -208,6 +215,12 @@ mkdir build-win64   # Create directory for 64-bit build
 cd build-win64      # Move into the directory
 cmake .. -A x64     # Call CMake on the upper source directory, specifying 64-bit
 cmake --build .     # Build the generated CMake files
+```
+
+To create a Release build, use the `DCMAKE_BUILD_TYPE` flag when generating and the `--config Release` when building.
+```
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
 ```
 
 
