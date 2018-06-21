@@ -18,8 +18,8 @@ if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE Debug)
 endif ()
 
-# Ensure libraries are installed correctly on all platforms
-# include(GNUInstallDirs)
+# include(GNUInstallDirs) # Ensure libraries are installed correctly on all platforms
+include(cmake/Qt5.cmake)
 
 # Disable coverage flags by default
 option(SS_ADD_COVERAGE_FLAGS "Add coverage options to compiler flags" OFF)
@@ -83,6 +83,9 @@ if (NOT DEFINED Qt5_DIR)
         set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Path to Qt installation")
     endif ()
 endif ()
+
+# Process and print
+get_filename_component(Qt5_DIR ${Qt5_DIR} REALPATH)
 MESSAGE(STATUS "\nQt5_DIR: " ${Qt5_DIR} "\n")
 
 # Make sure Qt was found on Windows
@@ -91,17 +94,6 @@ if (WIN32)
     if (NOT DEFINED Qt5_DIR)
         MESSAGE(FATAL_ERROR "QTDIR environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQt5_DIR=C:\\path\\to\\Qt.")
     endif ()
-
-    # Macro for lower level CMakeLists to copy DLLs
-    macro (qt5_copy_dll APP DLL)
-        # find the release *.dll file
-        get_target_property(Qt5_${DLL}Location Qt5::${DLL} LOCATION)
-        # find the debug *d.dll file
-        get_target_property(Qt5_${DLL}LocationDebug Qt5::${DLL} IMPORTED_LOCATION_DEBUG)
-
-        add_custom_command(TARGET ${APP} POST_BUILD
-           COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${Qt5_${DLL}LocationDebug}> $<$<NOT:$<CONFIG:Debug>>:${Qt5_${DLL}Location}> $<TARGET_FILE_DIR:${APP}>)
-    endmacro ()
 
 endif ()
 
@@ -114,6 +106,8 @@ find_package(Qt5 REQUIRED
     Qml
     Quick
     QuickControls2
+    Svg
+    Xml
 )
 
 
@@ -129,7 +123,7 @@ endif()
 
 # Define macro for collecting source files
 macro (add_sources)
-    file (RELATIVE_PATH _relPath "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+    file (RELATIVE_PATH _relPath "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
     foreach (_src ${ARGN})
         if (_relPath)
             list (APPEND SRC_FILES "${_relPath}/${_src}")
@@ -158,8 +152,10 @@ if (WIN32)
     qt5_copy_dll(splitsound Qml)
     qt5_copy_dll(splitsound Quick)
     qt5_copy_dll(splitsound QuickControls2)
-    qt5_copy_dll(splitsound QuickTemplates2d)
+    qt5_copy_dll(splitsound Svg)
+    qt5_copy_dll(splitsound Xml)
 
+    qt5_post_build_windeployqt(splitsound ${CMAKE_SOURCE_DIR}/src/gui/res)
 
 else ()
 
@@ -176,6 +172,8 @@ target_link_libraries(splitsound
     Qt5::Qml
     Qt5::Quick
     Qt5::QuickControls2
+    Qt5::Svg
+    Qt5::Xml
 )
 
 # Turn off coverage flags
@@ -205,13 +203,13 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 
     # Include directories needed for testing
     include_directories(
-        ${PROJECT_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
-        ${PROJECT_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
-        ${PROJECT_SOURCE_DIR}/src/gui/src
+        ${CMAKE_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
+        ${CMAKE_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
+        ${CMAKE_SOURCE_DIR}/src/gui/src
     )
 
     # Collect all test source files
-    file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/src/test/*/*.cpp)
+    file(GLOB TEST_SRC_FILES ${CMAKE_SOURCE_DIR}/src/test/*/*.cpp)
 
     # Move test executables to bin/test
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/test)
