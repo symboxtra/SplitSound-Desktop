@@ -80,7 +80,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
 MESSAGE(STATUS "\nBuilt and installed JRTPLIB\n")
 
 include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated headers
-set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
+#set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
 
 
 ######## Boost ########
@@ -90,7 +90,8 @@ set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_STATIC_RUNTIME OFF)
 set (Boost_ALL_DYN_LINK OFF)
 set (Boost_USE_DEBUG_LIBS ON)
-set (BOOST_LIBRARYDIR ${BOOST_ROOT}/lib64-msvc14.1)
+if (NOT DEFINED BOOST_LIBRARYDIR)
+	set (BOOST_LIBRARYDIR ${BOOST_ROOT}/lib64-msvc14.1)
 
 if (NOT DEFINED BOOST_ROOT)
 	if(DEFINED ENV{BOOST})

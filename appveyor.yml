@@ -1,13 +1,12 @@
 image: Visual Studio 2017
 
 environment:
+    BOOST_ROOT: C:\Libraries\boost_1_60_0
+    BOOST_LIBRARYDIR: C:\Libraries\boost_1_60_0\lib64-msvc-12.0
     matrix:
     - QT: C:\Qt\5.10.1\msvc2017_64
       PLATFORM: amd64
       COMPILER: msvc
-      VSVER: 14
-      BOOST_ROOT: C:\Libraries\boost_1_58_0
-      BOOST_LIBRARYDIR: C:\Libraries\boost_1_58_0\lib64-msvc-12.0
       VSVER: 14
     WEBHOOK_URL:
       secure: xy3jJldR20n3fT4ekICPX5cetYvwW3pt1NnAfCrdD/Dxc4Xqz9vfwdtPNTFb28AFch8TyYWJva739YOFArmdBlHk8JmLqzQUrNom5VHpEdCcllpyvbroTlhE9Ah8BURvai5VhzsI9pmG4jItOXbeqIw1zRJNdqQxiK2/YOaD+RY=
