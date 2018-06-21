@@ -1,6 +1,6 @@
 ######## Config ########
 
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.7)
 
 # Declare project
 project (SplitSound CXX)
@@ -103,7 +103,7 @@ endif()
 MESSAGE(STATUS "BOOST_ROOT: " ${BOOST_ROOT} "\n")
 
 # Required Boost packages
-find_package(Boost REQUIRED
+find_package(Boost 1.60 REQUIRED
 	system
 	filesystem
 	thread
