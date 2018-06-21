@@ -3,6 +3,11 @@ image: Visual Studio 2017
 environment:
     BOOST_ROOT: C:\Libraries\boost_1_67_0
     BOOST_LIBRARYDIR: C:\Libraries\boost_1_67_0\lib64-msvc-14.1
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    GENERATOR: Visual Studio 15 2017
+    AUTOLINK: ON
+    STATIC: ON
+
     matrix:
     - QT: C:\Qt\5.10.1\msvc2017_64
       PLATFORM: amd64

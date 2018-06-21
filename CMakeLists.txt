@@ -85,11 +85,10 @@ include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated heade
 
 ######## Boost ########
 
+set (Boost_DEBUG ON)
 set (Boost_USE_MULTITHREADED ON)
 set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_STATIC_RUNTIME OFF)
-set (Boost_ALL_DYN_LINK OFF)
-set (Boost_USE_DEBUG_LIBS ON)
 if (NOT DEFINED BOOST_LIBRARYDIR)
 	set (BOOST_LIBRARYDIR ${BOOST_ROOT}/lib64-msvc-14.1)
 endif()
@@ -103,7 +102,7 @@ endif()
 MESSAGE(STATUS "BOOST_ROOT: " ${BOOST_ROOT} "\n")
 
 # Required Boost packages
-find_package(Boost 1.60 REQUIRED
+find_package(Boost 1.60 REQUIRED COMPONENTS
 	system
 	filesystem
 	thread
