@@ -44,6 +44,45 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib/lib) # TODO: ?
 endforeach ()
 
+
+######## Dependencies and Libs ########
+
+message(STATUS "\nBuilding required dependency JThread...\n")
+
+# Manually cmake and install JThread (required for JRTPLIB)
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
+)
+execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
+)
+
+message(STATUS "\nBuilt and installed JThread.\nContinuing CMake generation...\n")
+
+# Prevent -Wunused-result from killing the Release build
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-result")
+endif()
+
+# Add JRTPLIB
+set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/lib)
+MESSAGE(STATUS "\nBuilding JRTPLIB dependency...\n")
+
+# Manually cmake and install JRTPLIB
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jrtplib)
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
+)
+execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
+)
+MESSAGE(STATUS "\nBuilt and installed JRTPLIB\n")
+
+include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated headers
+#set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
+
+
 ######## Boost ########
 
 set (Boost_DEBUG ON)
