@@ -20,6 +20,8 @@
 using namespace std;
 using namespace jrtplib;
 
+using byte = uint8_t;
+
 enum class AppPacket {LIST_ALL, INFO, LOGIN, ACCEPT, SR, RR, BYE};
 
 class RTPNetworking
@@ -28,9 +30,7 @@ class RTPNetworking
 	private:
 		const int RTPPort = 6004;
 		const int RTCPPort = 8000;
-
-
-
+		RTPSession session;
 	public:
 		static const Buffer<AppPacket> requestQ();
 
@@ -45,19 +45,18 @@ class RTPNetworking
 			
 				int status;
 
-				RTPUDPv4TransmissionParams transparams;
-				//RTPSessionParams sessParams;
-				//RTPSession sess;
+				/*jrtplib::RTPUDPv4TransmissionParams transparams;
+				RTPSessionParams sessParams;
 
-			/*	sessParams.SetOwnTimeStampUnit(1.0 / 44100.0);
+				sessParams.SetOwnTimestampUnit(1.0 / 44100.0);
 				sessParams.SetAcceptOwnPackets(true);
-				transParams.setPortbase(RTPPort);
+				transParams.SetPortbase(RTPPort);
 
-				status = sess.Create(sessParams, &transParams);
+				status = session.Create(sessParams, &transParams);
 				checkError(status);
 
-				cout << "Temp\n" << endl;
-			*/
+				cout << "Temp\n" << endl;*/
+			
 				
 			}catch(boost::thread_interrupted& inter){
 				
@@ -69,7 +68,7 @@ class RTPNetworking
 		{
 			if(err < 0)
 			{
-				//cout << "ERROR: " << RTPGetErrorString(err) << endl;
+				cout << "ERROR: " << RTPGetErrorString(err) << endl;
 				exit(-1);
 			}
 		}
