@@ -30,7 +30,7 @@ class RTPNetworking
 	private:
 		const int RTPPort = 6004;
 		const int RTCPPort = 8000;
-		RTPSession session;
+	//	RTPSession session;
 	public:
 		static const Buffer<AppPacket> requestQ();
 
