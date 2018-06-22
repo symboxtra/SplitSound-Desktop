@@ -44,7 +44,6 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib/lib) # TODO: ?
 endforeach ()
 
-
 ######## Dependencies and Libs ########
 
 message(STATUS "\nBuilding required dependency JThread...\n")
@@ -86,8 +85,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
 MESSAGE(STATUS "\nBuilt and installed JRTPLIB\n")
 
 include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated headers
-set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
-
+#set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
 
 ######## Boost ########
 
