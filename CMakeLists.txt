@@ -49,7 +49,7 @@ endforeach ()
 
 message(STATUS "\nBuilding required dependency JThread...\n")
 
-if(WIN32 AND NOT ${CMAKE_GENERATOR_PLATFORM} EQUAL "x64")
+if(WIN32)
 	set (JRTP_FLAGS "-A x64")
 else()
 	set (JRTP_FLAGS "")
