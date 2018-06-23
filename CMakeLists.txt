@@ -86,6 +86,8 @@ MESSAGE(STATUS "\nBuilt and installed JRTPLIB\n")
 include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated headers
 if(WIN32)
 	set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/libjthread.dylib ${CMAKE_BINARY_DIR}/lib/lib/libjrtp.dylib)
 else()
 	set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/libjthread.so ${CMAKE_BINARY_DIR}/lib/lib/libjrtp.so)
 endif()
