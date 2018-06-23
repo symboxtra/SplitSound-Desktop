@@ -1,6 +1,6 @@
 ######## Config ########
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.5)
 
 # Declare project
 project (SplitSound CXX)
@@ -48,9 +48,14 @@ endforeach ()
 
 message(STATUS "\nBuilding required dependency JThread...\n")
 
+if(WIN32 AND NOT ${CMAKE_GENERATOR_PLATFORM} EQUAL "x64")
+	set (JFLAGS -A x64)
+	MESSAGE (STATUS ${JFLAGS})
+endif()
+
 # Manually cmake and install JThread (required for JRTPLIB)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread ${JFLAGS} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
 )
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -70,7 +75,7 @@ MESSAGE(STATUS "\nBuilding JRTPLIB dependency...\n")
 
 # Manually cmake and install JRTPLIB
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jrtplib)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
+execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib ${JFLAGS} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
 )
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -79,11 +84,13 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
 MESSAGE(STATUS "\nBuilt and installed JRTPLIB\n")
 
 include_directories("${CMAKE_BINARY_DIR}/lib/include") # Include generated headers
-#set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
-
+if(WIN32)
+	set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/jthread_d.lib ${CMAKE_BINARY_DIR}/lib/lib/jrtplib_d.lib)
+else()
+	set (SS_LIBRARIES ${SS_LIBRARIES} ${CMAKE_BINARY_DIR}/lib/lib/libjthread.so ${CMAKE_BINARY_DIR}/lib/lib/libjrtp.so)
+endif()
 ######## Boost ########
 
-set (Boost_DEBUG ON)
 set (Boost_USE_MULTITHREADED ON)
 set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_STATIC_RUNTIME OFF)

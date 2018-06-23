@@ -30,7 +30,7 @@ class RTPNetworking
 	private:
 		const int RTPPort = 6004;
 		const int RTCPPort = 8000;
-	//	RTPSession session;
+		RTPSession session;
 	public:
 		static const Buffer<AppPacket> requestQ();
 
@@ -45,7 +45,7 @@ class RTPNetworking
 			
 				int status;
 
-				/*jrtplib::RTPUDPv4TransmissionParams transparams;
+				RTPUDPv4TransmissionParams transParams;
 				RTPSessionParams sessParams;
 
 				sessParams.SetOwnTimestampUnit(1.0 / 44100.0);
@@ -54,8 +54,6 @@ class RTPNetworking
 
 				status = session.Create(sessParams, &transParams);
 				checkError(status);
-
-				cout << "Temp\n" << endl;*/
 			
 				
 			}catch(boost::thread_interrupted& inter){
