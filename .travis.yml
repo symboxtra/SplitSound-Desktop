@@ -18,7 +18,6 @@ cache:
         - build/jrtplib
 
 git:
-    depth: 1 # Limit unneeded commit depth
     submodules: false
 
 before_install:
@@ -62,7 +61,7 @@ install:
         fi
 
 before_script:
-    - mkdir build
+    - mkdir -p build
     - cd build
     - cmake ..
     - cd ..

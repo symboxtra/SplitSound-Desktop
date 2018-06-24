@@ -87,7 +87,7 @@ if (WIN32 AND 64BIT)
 endif ()
 
 # Check if JRTPLIB and JThread libs should be build
-if (NOT DEFINED SS_BUILD_JLIBS AND EXISTS "${CMAKE_BINARY_DIR}/lib/lib/cmake/JThread" AND EXISTS "${CMAKE_BINARY_DIR}/lib/lib/JRTPLIB")
+if (NOT DEFINED SS_BUILD_LIBS AND EXISTS "${CMAKE_BINARY_DIR}/lib/lib/cmake/JThread/JThreadConfig.cmake" AND EXISTS "${CMAKE_BINARY_DIR}/lib/lib/cmake/JRTPLIB/JRTPLIBConfig.cmake")
     set (SS_BUILD_JLIBS FALSE)
 endif ()
 
@@ -130,6 +130,9 @@ else ()
     message (STATUS "SS_BUILD_JLIBS was set to FALSE. JRTPLIB and JThread have not been built.\n")
 
 endif ()
+
+# Default to false for future builds
+set (SS_BUILD_LIBS FALSE)
 
 # Find the libraries
 # Unix libraries should not include the prefix (i.e. libjrtp is just jrtp)
