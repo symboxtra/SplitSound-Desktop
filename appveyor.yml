@@ -20,6 +20,11 @@ environment:
 
 clone_depth: 1
 
+cache:
+    - build/lib -> src/libs/jrtplib, src/libs/jthread
+    - build/jthread -> src/libs/jthread
+    - build/jrtplib -> src/libs/jrtplib
+
 init:
     - set TAG_NAME=%APPVEYOR_REPO_TAG_NAME%
 
