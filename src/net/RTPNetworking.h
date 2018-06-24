@@ -16,6 +16,7 @@
 #include <jrtplib3/rtplibraryversion.h>
 
 #include "Buffer.h"
+#include "RTPReceiverTask.h"
 
 using namespace std;
 using namespace jrtplib;
@@ -30,9 +31,10 @@ class RTPNetworking
 	private:
 		const int RTPPort = 6004;
 		const int RTCPPort = 8000;
-		RTPSession session;
+		RTPSession* session;
 	public:
 		static const Buffer<AppPacket> requestQ();
+		static Buffer<byte[]> networkingPackets();
 
 		RTPNetworking()
 		{
@@ -52,8 +54,12 @@ class RTPNetworking
 				sessParams.SetAcceptOwnPackets(true);
 				transParams.SetPortbase(RTPPort);
 
-				status = session.Create(sessParams, &transParams);
+				status = session->Create(sessParams, &transParams);
 				checkError(status);
+
+				RTPReceiverTask* receiver = new RTPReceiverTask(session);
+
+
 			
 				
 			}catch(boost::thread_interrupted& inter){

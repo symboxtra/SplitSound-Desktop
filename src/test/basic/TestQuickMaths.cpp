@@ -10,7 +10,7 @@ TEST(TestQuickMaths, basicMath_canAdd)
 	
 	EXPECT_EQ(4, result);
 
-	RTPNetworking* rtp = new RTPNetworking();
+	//RTPNetworking* rtp = new RTPNetworking();
 }
 
 TEST(TestQuickMaths, basicMath_canSubtract)
