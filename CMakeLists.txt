@@ -85,7 +85,6 @@ if (NOT DEFINED Qt5_DIR)
 endif ()
 
 # Process and print
-get_filename_component(Qt5_DIR ${Qt5_DIR} REALPATH)
 MESSAGE(STATUS "\nQt5_DIR: " ${Qt5_DIR} "\n")
 
 # Make sure Qt was found on Windows
