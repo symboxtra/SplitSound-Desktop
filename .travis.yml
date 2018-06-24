@@ -11,6 +11,12 @@ matrix:
             apt:
                 update: true
 
+cache:
+    directories:
+        - build/lib
+        - build/jthread
+        - build/jrtplib
+
 git:
     depth: 1 # Limit unneeded commit depth
     submodules: false
