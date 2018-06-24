@@ -1,6 +1,6 @@
 ######## Config ########
 
-cmake_minimum_required (VERSION 3.11)
+cmake_minimum_required (VERSION 3.9)
 
 # Declare project
 project (SplitSound CXX)

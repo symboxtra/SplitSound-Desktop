@@ -36,7 +36,7 @@ before_build:
         ""
         Write-Host "===== Generating CMake... =====" -Foreground Yellow
         ""
-        cmake .. -A x64 -DQt5_DIR=C:\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5 -DBOOST_ROOT=C:\Libraries\boost_1_67_0
+        cmake .. -A x64 -DQT_ROOT=C:\Qt\5.10.1 -DBOOST_ROOT=C:\Libraries\boost_1_67_0
         if($LastExitCode -ne 0){$host.SetShouldExit($LastExitCode)}
         cd ..
 
