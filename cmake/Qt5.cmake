@@ -36,7 +36,7 @@ macro (qt5_post_build_macdeployqt APP QMLDIR)
     add_custom_command (TARGET ${APP} POST_BUILD
             COMMAND ${QTBIN}/macdeployqt -qmldir ${QMLDIR} $<TARGET_FILE:${APP}> WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
      
-    MESSAGE(STATUS "Added post-build call to macdeployqt")
+    message (STATUS "Added post-build call to macdeployqt")
 
 endmacro ()
 

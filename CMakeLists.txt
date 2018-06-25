@@ -216,6 +216,7 @@ if (WIN32 AND NOT DEFINED Qt5_DIR)
     else ()
         set (Qt5_DIR "${QT_ROOT}\\msvc2015\\lib\\cmake\\Qt5")
     endif ()
+    
     message (STATUS "Qt5_DIR: ${Qt5_DIR}")
 endif ()
 
