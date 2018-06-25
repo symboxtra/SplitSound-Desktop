@@ -410,7 +410,7 @@ Rectangle {
                 }
 
                 onClicked: {
-                    console.log("Settings opened")
+                    settingsBridge.test()
                     settings_modal.visible = !settings_modal.visible
                 }
 

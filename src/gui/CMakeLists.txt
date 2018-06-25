@@ -7,5 +7,7 @@ add_sources(
     res/logos/windows/SplitSound.rc
     src/main.cpp
     src/QSplitSoundApplication.cpp
+    src/QQmlBridge.cpp
+    src/QQmlSettingsBridge.cpp
     src/MainWindow.cpp
 )

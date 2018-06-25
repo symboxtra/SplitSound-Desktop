@@ -8,6 +8,7 @@
 
 #include "QSplitSoundApplication.h"
 #include "MainWindow.h"
+#include "QQmlSettingsBridge.h"
 
 int main(int argc, char *argv[]) {
 
@@ -30,6 +31,9 @@ int main(int argc, char *argv[]) {
 
     MainWindow mainWindow;
     mainWindow.show();
+
+    QScopedPointer<QQmlBridge> settingsBridge(new QQmlSettingsBridge("settingsBridge"));
+    mainWindow.addBridge(settingsBridge);
 
     return app.exec();
 }

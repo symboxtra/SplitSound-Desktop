@@ -2,6 +2,8 @@
  *  Created by Jack McKernan on 5/8/2018.
  */
 
+#include <QQmlContext>
+
 #include "MainWindow.h"
 
 MainWindow::MainWindow()
@@ -12,6 +14,11 @@ MainWindow::MainWindow()
     setResizeMode(QQuickView::SizeRootObjectToView); // Size QML root to window
 
     setSource(QUrl("qrc:/main.qml"));
+}
+
+void MainWindow::addBridge(QScopedPointer<QQmlBridge> &bridge)
+{
+    rootContext()->setContextProperty(QString::fromStdString(bridge->getName()), bridge.data());
 }
 
 MainWindow::~MainWindow()

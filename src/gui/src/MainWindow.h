@@ -6,6 +6,7 @@
 #define MAIN_WINDOW_H
 
 #include <QQuickView>
+#include "QQmlBridge.h"
 
 class QSplitSoundApplication;
 
@@ -19,6 +20,8 @@ class MainWindow : public QQuickView
 
         MainWindow();
         ~MainWindow();
+
+        void addBridge(QScopedPointer<QQmlBridge> &bridge);
 
 };
 
