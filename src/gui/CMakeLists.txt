@@ -1,6 +1,5 @@
-
 # Add include directories
-include_directories(src res)
+add_include_dir(src res)
 
 # Add source files
 add_sources(

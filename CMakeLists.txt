@@ -1,16 +1,24 @@
 ######## Config ########
 
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.9)
 
 # Declare project
 project (SplitSound CXX)
+
+include (cmake/Qt5.cmake)
+include (cmake/SplitSound.cmake)
 
 # Version
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 0)
 set (VERSION_REV 0)
+set (VERSION_BUILD 0)
 set (VERSION_STAGE dev)
-set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV} ${VERSION_STAGE}")
+set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV}.${VERSION_BUILD} ${VERSION_STAGE}")
+
+message (STATUS "")
+message (STATUS "Building SplitSound v${VERSION}")
+message (STATUS "")
 
 # Set build type if not provided
 # Default to DEBUG
@@ -18,53 +26,168 @@ if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE Debug)
 endif ()
 
-# include(GNUInstallDirs) # Ensure libraries are installed correctly on all platforms
-include(cmake/Qt5.cmake)
+set (OSX FALSE)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set (OSX TRUE)
+endif ()
+
+set (64BIT FALSE)
+if (WIN32 AND CMAKE_GENERATOR_PLATFORM MATCHES "x64")
+    set (64BIT TRUE)
+endif ()
 
 # Disable coverage flags by default
-option(SS_ADD_COVERAGE_FLAGS "Add coverage options to compiler flags" OFF)
+option (SS_ADD_COVERAGE_FLAGS "Add coverage options to compiler flags" OFF)
 if (CMAKE_BUILD_TYPE MATCHES "Debug" AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-    set(SS_ADD_COVERAGE_FLAGS ON)
+    set (SS_ADD_COVERAGE_FLAGS ON)
+endif ()
+
+# Prevent -Wunused-result from killing the Release build
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-result")
 endif ()
 
 # Set output for binaries
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lib)
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lib) # TODO: ?
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lib)
 foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     string (TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin)
     set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib/lib)
-    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib/lib) # TODO: ?
+    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/lib/lib)
 endforeach ()
+
+# Set output for libs compiled with --target install
+set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/lib)
+
+message (STATUS "System Platform: ${CMAKE_SYSTEM_NAME} ${CMAKE_GENERATOR_PLATFORM}\n")
+
+# Initialize lists
+set (SRC_FILES)
+set (INCLUDE_DIRS)
+set (SS_LIBRARIES)
+
+# Link Windows specific libraries
+if (WIN32)
+    set (SS_LIBRARIES wsock32 ws2_32 iphlpapi)
+endif ()
 
 
 
 
 ######## Dependencies and Libs ########
 
-message(STATUS "\nBuilding required dependency JThread...\n")
+message (STATUS "Building required JRTP dependencies...\n")
 
-# Manually cmake and install JThread (required for JRTPLIB)
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/lib
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
+# Make sure libs build x64 if x64 flag is passed in
+if (WIN32 AND 64BIT)
+    set (JFLAGS -A x64)
+endif ()
+
+# Check if JRTPLIB and JThread libs should be build
+if (NOT DEFINED SS_BUILD_JLIBS AND EXISTS "${CMAKE_BINARY_DIR}/lib/lib/cmake/JThread/JThreadConfig.cmake" AND EXISTS "${CMAKE_BINARY_DIR}/lib/lib/cmake/JRTPLIB/JRTPLIBConfig.cmake")
+    set (SS_BUILD_JLIBS FALSE)
+endif ()
+
+# Default to true
+if (NOT DEFINED SS_BUILD_JLIBS)
+    set (SS_BUILD_JLIBS TRUE)
+endif ()
+
+if (SS_BUILD_JLIBS)
+
+    # Manually cmake and install JThread (required for JRTPLIB)
+    execute_process (COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
+    execute_process (COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread ${JFLAGS} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
+    )
+    execute_process (COMMAND ${CMAKE_COMMAND} --build . --target install
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
+    )
+
+    message (STATUS "Built and installed JThread.")
+    message (STATUS "Continuing CMake generation...\n")
+
+    # Add JRTPLIB
+    message (STATUS "Building JRTPLIB dependency...\n")
+
+    # Manually cmake and install JRTPLIB
+    execute_process (COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jrtplib)
+    execute_process (COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib ${JFLAGS} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
+    )
+    execute_process (COMMAND ${CMAKE_COMMAND} --build . --target install
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
+    )
+
+    message (STATUS "Built and installed JRTPLIB.")
+    message (STATUS "Continuing CMake generation...\n")
+
+else ()
+
+    message (STATUS "SS_BUILD_JLIBS was set to FALSE. JRTPLIB and JThread have not been built.\n")
+
+endif ()
+
+# Default to false for future builds
+set (SS_BUILD_JLIBS FALSE)
+
+# Find the libraries
+# Unix libraries should not include the prefix (i.e. libjrtp is just jrtp)
+find_library (JTHREAD_LIB
+    NAMES jthread jthread_d
 )
-execute_process(COMMAND ${CMAKE_COMMAND} --build . --target install
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
+find_library (JRTPLIB_LIB
+    NAMES jrtplib jrtplib_d jrtp
 )
 
-message(STATUS "\nBuilt and installed JThread.\nContinuing CMake generation...\n")
+message (STATUS ${JRTPLIB_LIB})
+message (STATUS ${JTHREAD_LIB})
 
-# Prevent -Wunused-result from killing the Release build
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-result")
-endif()
+# Link built JRTP with current project
+include_directories (${CMAKE_BINARY_DIR}/lib/include) # Include generated headers
+set (SS_LIBRARIES ${SS_LIBRARIES} ${JTHREAD_LIB} ${JRTPLIB_LIB})
 
-# Add JRTPLIB
-set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/lib)
-add_subdirectory(src/libs/jrtplib)
-include_directories(${CMAKE_BINARY_DIR}/src/libs/jrtplib/src) # Include generated headers
+
+
+
+######## Boost ########
+
+set (Boost_USE_MULTITHREADED ON)
+set (Boost_USE_STATIC_LIBS ON)
+set (Boost_USE_STATIC_RUNTIME OFF)
+
+if (WIN32 AND NOT DEFINED BOOST_ROOT)
+    if (DEFINED ENV{BOOST_ROOT})
+        set (BOOST_ROOT $ENV{BOOST_ROOT} CACHE STRING "Path to Boost Installation")
+    else ()
+        message (FATAL_ERROR "BOOST_ROOT environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DBOOST_ROOT=C:\\path\\to\\boost")
+    endif ()
+endif ()
+
+message (STATUS "BOOST_ROOT: " ${BOOST_ROOT} "\n")
+
+if (WIN32 AND NOT DEFINED BOOST_LIBRARYDIR)
+    if(64BIT)
+        set (BOOST_LIBRARYDIR "${BOOST_ROOT}\\lib64-msvc-14.1")
+    else ()
+        set (BOOST_LIBRARYDIR "${BOOST_ROOT}\\lib32-msvc-14.1")
+    endif ()
+    message (STATUS "Boost Lib Dir: ${BOOST_LIBRARYDIR}")
+endif ()
+
+# Required Boost packages
+find_package (Boost REQUIRED COMPONENTS
+    system
+    filesystem
+    thread
+    date_time
+)
+
+include_directories (${Boost_INCLUDE_DIRS})
+set (SS_LIBRARIES ${SS_LIBRARIES} ${Boost_LIBRARIES})
 
 
 
@@ -77,27 +200,28 @@ set (CMAKE_AUTOMOC ON)
 set (CMAKE_AUTOUIC ON)
 set (CMAKE_AUTORCC ON)
 
-# Cache and print Qt location
-if (NOT DEFINED Qt5_DIR)
-    if (DEFINED ENV{QTDIR})
-        set (Qt5_DIR $ENV{QTDIR} CACHE STRING "Path to Qt installation")
+if (WIN32 AND NOT DEFINED QT_ROOT)
+    if (DEFINED ENV{QT_ROOT})
+        set (QT_ROOT $ENV{QT_ROOT} CACHE STRING "Path to Qt Installation")
+    else ()
+        message (FATAL_ERROR "QT_ROOT environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQT_ROOT=C:\\path\\to\\qt\\5.XX.X")
     endif ()
 endif ()
 
-# Process and print
-MESSAGE(STATUS "\nQt5_DIR: " ${Qt5_DIR} "\n")
+message (STATUS "QT_ROOT: " ${QT_ROOT} "\n")
 
-# Make sure Qt was found on Windows
-if (WIN32)
-
-    if (NOT DEFINED Qt5_DIR)
-        MESSAGE(FATAL_ERROR "QTDIR environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQt5_DIR=C:\\path\\to\\Qt.")
+if (WIN32 AND NOT DEFINED Qt5_DIR)
+    if(64BIT)
+        set (Qt5_DIR "${QT_ROOT}\\msvc2017_64\\lib\\cmake\\Qt5")
+    else ()
+        set (Qt5_DIR "${QT_ROOT}\\msvc2015\\lib\\cmake\\Qt5")
     endif ()
-
+    
+    message (STATUS "Qt5_DIR: ${Qt5_DIR}")
 endif ()
 
 # Required Qt packages
-find_package(Qt5 REQUIRED
+find_package (Qt5 REQUIRED
     Core
     Widgets
     Gui
@@ -109,61 +233,8 @@ find_package(Qt5 REQUIRED
     Xml
 )
 
-
-
-
-######## Executable ########
-
-# Add coverage flags for GCC
-set (CXX_FLAGS_NOCOV "${CMAKE_CXX_FLAGS}")
-if (SS_ADD_COVERAGE_FLAGS)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()
-
-# Define macro for collecting source files
-macro (add_sources)
-    file (RELATIVE_PATH _relPath "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
-    foreach (_src ${ARGN})
-        if (_relPath)
-            list (APPEND SRC_FILES "${_relPath}/${_src}")
-        else()
-            list (APPEND SRC_FILES "${_src}")
-        endif()
-    endforeach()
-    if (_relPath)
-        # propagate SRCS to parent directory
-        set (SRC_FILES ${SRC_FILES} PARENT_SCOPE)
-    endif()
-endmacro()
-
-add_subdirectory(src/gui)
-
-# Add executable
-if (WIN32)
-
-    add_executable(splitsound ${SRC_FILES})
-
-    # Copy DLLs to binary output directory
-    qt5_copy_dll(splitsound Core)
-    qt5_copy_dll(splitsound Widgets)
-    qt5_copy_dll(splitsound Gui)
-    qt5_copy_dll(splitsound Network)
-    qt5_copy_dll(splitsound Qml)
-    qt5_copy_dll(splitsound Quick)
-    qt5_copy_dll(splitsound QuickControls2)
-    qt5_copy_dll(splitsound Svg)
-    qt5_copy_dll(splitsound Xml)
-
-    qt5_post_build_windeployqt(splitsound ${CMAKE_SOURCE_DIR}/src/gui/res)
-
-else ()
-
-    add_executable(splitsound ${SRC_FILES})
-
-endif ()
-
-# Link Qt
-target_link_libraries(splitsound
+set (SS_LIBRARIES
+    ${SS_LIBRARIES}
     Qt5::Core
     Qt5::Widgets
     Qt5::Gui
@@ -175,6 +246,54 @@ target_link_libraries(splitsound
     Qt5::Xml
 )
 
+
+
+
+######## Executable ########
+
+# Add coverage flags for GCC
+set (CXX_FLAGS_NOCOV "${CMAKE_CXX_FLAGS}")
+if (SS_ADD_COVERAGE_FLAGS)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif ()
+
+add_subdirectory (src/gui)
+add_subdirectory (src/net)
+
+include_directories(${INCLUDE_DIRS})
+
+# Add executable
+if (WIN32)
+
+    add_executable (splitsound ${SRC_FILES})
+
+    # Copy DLLs to binary output directory
+    qt5_copy_dll (splitsound Core)
+    qt5_copy_dll (splitsound Widgets)
+    qt5_copy_dll (splitsound Gui)
+    qt5_copy_dll (splitsound Network)
+    qt5_copy_dll (splitsound Qml)
+    qt5_copy_dll (splitsound Quick)
+    qt5_copy_dll (splitsound QuickControls2)
+    qt5_copy_dll (splitsound Svg)
+    qt5_copy_dll (splitsound Xml)
+
+    qt5_post_build_windeployqt(splitsound ${CMAKE_SOURCE_DIR}/src/gui/res)
+
+elseif (OSX)
+
+    add_executable(splitsound ${SRC_FILES})
+    # TODO later: qt5_post_build_macdeployqt(splitsound ${CMAKE_SOURCE_DIR}/src/gui/res)
+
+else ()
+
+    add_executable(splitsound ${SRC_FILES})
+
+endif ()
+
+# Link Qt
+target_link_libraries(splitsound ${SS_LIBRARIES})
+
 # Turn off coverage flags
 set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")
 
@@ -185,46 +304,7 @@ set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")
 
 # Build settings for DEBUG builds only
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    # Prevent overriding compiler/linker options
-    if (WIN32)
-        set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    endif ()
 
-    # Enable testing and build googletest submodule
-    enable_testing()
-    add_subdirectory(src/libs/googletest)
-
-    # Change flags only for gcc compiler
-    if (SS_ADD_COVERAGE_FLAGS)
-        # Enable GCOV flags
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-    endif()
-
-    # Include directories needed for testing
-    include_directories(
-        ${CMAKE_SOURCE_DIR}/src/libs/googletest/googletest/include/gtest
-        ${CMAKE_SOURCE_DIR}/src/libs/googletest/googlemock/include/gmock
-        ${CMAKE_SOURCE_DIR}/src/gui/src
-    )
-
-    # Collect all test source files
-    file(GLOB TEST_SRC_FILES ${CMAKE_SOURCE_DIR}/src/test/*/*.cpp)
-
-    # Move test executables to bin/test
-    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/test)
-    foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
-        string (TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
-        set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin/test)
-    endforeach ()
-
-
-    # Create executables and CTest for each file
-    foreach(_test_file ${TEST_SRC_FILES})
-        get_filename_component(_test_name ${_test_file} NAME_WE)
-        add_executable(${_test_name} ${_test_file})
-        target_link_libraries(${_test_name} gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
-        add_test(NAME ${_test_name} COMMAND ${_test_name} "--gtest_color=yes") # Point ctest to bin/test
-        set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
-    endforeach()
+    include (cmake/Testing.cmake)
 
 endif ()

@@ -11,8 +11,13 @@ matrix:
             apt:
                 update: true
 
+cache:
+    directories:
+        - build/lib
+        - build/jthread
+        - build/jrtplib
+
 git:
-    depth: 1 # Limit unneeded commit depth
     submodules: false
 
 before_install:
@@ -25,6 +30,7 @@ install:
             brew update
             brew install qt
             brew install lcov
+            brew install boost
             export PATH=/usr/local/opt/qt/bin:${PATH}
         fi
     - |
@@ -38,20 +44,24 @@ install:
             mkdir $HOME/qt
             tar -xzf $HOME/qt-portable-ubuntu-16.04-v2.tar.gz -C $HOME/qt --strip-components 1
 
-            export PATH=$HOME/qt/5.10.1/gcc_64/bin:${PATH}
-            export LD_LIBRARY_PATH=$HOME/qt/5.10.1/gcc_64/lib
-            export QT_PLUGIN_PATH=$HOME/qt/5.10.1/gcc_64/plugins
-            export QML_IMPORT_PATH=$HOME/qt/5.10.1/gcc_64/qml
-            export QML2_IMPORT_PATH=$HOME/qt/5.10.1/gcc_64/qml
+            qt_version="5.10.1"
+            
+            export PATH=$HOME/qt/${qt_version}/gcc_64/bin:${PATH}
+            export LD_LIBRARY_PATH=$HOME/qt/${qt_version}/gcc_64/lib
+            export QT_PLUGIN_PATH=$HOME/qt/${qt_version}/gcc_64/plugins
+            export QML_IMPORT_PATH=$HOME/qt/${qt_version}/gcc_64/qml
+            export QML2_IMPORT_PATH=$HOME/qt/${qt_version}/gcc_64/qml
             export QT_DEBUG_PLUGINS=1
             export QT_IMPORT_TRACE=1
 
             qmake -v
-            echo "Installed Qt 5.10.1"
+            echo "Installed Qt ${qt_version}"
+
+            sudo apt install libboost-all-dev
         fi
 
 before_script:
-    - mkdir build
+    - mkdir -p build
     - cd build
     - cmake ..
     - cd ..
