@@ -71,6 +71,7 @@ With a Qt installation, CMake, and the compiler of your choice, we hope there sh
 | :---: | :---: | :--- |
 | Qt | 5.10.0+ | Cross-platform GUI |
 | CMake | 3.6+ | Cross-platform 'Makefile' generator |
+| Boost | 1.6+ | Portable C++ thread libraries |
 
 #### Compilers ####
 | Platform | Compiler | Version |
@@ -124,12 +125,21 @@ cmake .. -A x64                     # Normal 64-bit build
 cmake .. -DQt5_DIR="$ENV:QTDIR32"   # 32-bit build, targeting 32-bit Qt installation
 ```
 
+Boost is required to build this project. It can be downloaded from https://dl.bintray.com/boostorg/release/1.67.0/binaries.
+It is recommended that you download either the `msvc-all-32-64` or `msvc-14.1-32 or msvc-14.1-32` depending on your Windows system.
+
+Once installed, add the following environment variable to Windows
+```
+BOOST_ROOT        C:\Your\Path\To\boost
+```
+
 #### OSX ####
 
 We recommend installing all packages via the [HomeBrew](https://brew.sh) package manager.
 ```
 brew install qt
 brew install cmake
+brew install boost
 brew install lcov # Used for code coverage
 ```
 
@@ -159,7 +169,12 @@ If the package manager on your system has Qt 5.10+, you can install it that way.
 
 As with OSX, Qt's `bin` directory should be on your path. Most package managers take care of this for you.
 
-If you're looking to setup Linux-based CI with Qt 5.10+, we've experienced the struggle and would be happy to assist [privately](mailto:dev.symboxtra@gmail.com].
+If you're looking to setup Linux-based CI with Qt 5.10+, we've experienced the struggle and would be happy to assist [privately](mailto:dev.symboxtra@gmail.com).
+
+To install boost on linux just run the following command
+```
+sudo apt install libboost-all-dev
+```
 
 
 #### Troubleshooting ####
