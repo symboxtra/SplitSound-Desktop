@@ -1,6 +1,6 @@
 ######## Config ########
 
-cmake_minimum_required (VERSION 3.9)
+cmake_minimum_required (VERSION 3.5)
 
 # Declare project
 project (SplitSound CXX)
@@ -14,7 +14,7 @@ set (VERSION_MINOR 0)
 set (VERSION_REV 0)
 set (VERSION_BUILD 0)
 set (VERSION_STAGE dev)
-set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV}.${VERSION_BUILD} ${VERSION_STAGE}")
+set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV}.${VERSION_BUILD}-${VERSION_STAGE}")
 
 message (STATUS "")
 message (STATUS "Building SplitSound v${VERSION}")
@@ -293,6 +293,11 @@ endif ()
 
 # Link Qt
 target_link_libraries(splitsound ${SS_LIBRARIES})
+
+# Make sure QML resources are always regenerated
+# This became a problem sometime after CMake v3.11.0-rc1
+add_custom_command (TARGET splitsound PRE_BUILD
+   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/splitsound_autogen)
 
 # Turn off coverage flags
 set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")
