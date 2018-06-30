@@ -2,9 +2,6 @@
 
 cmake_minimum_required (VERSION 3.5)
 
-# Declare project
-project (SplitSound CXX)
-
 include (cmake/Qt5.cmake)
 include (cmake/SplitSound.cmake)
 
@@ -13,11 +10,13 @@ set (VERSION_MAJOR 0)
 set (VERSION_MINOR 0)
 set (VERSION_REV 0)
 set (VERSION_BUILD 0)
-set (VERSION_STAGE dev)
-set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV}.${VERSION_BUILD}-${VERSION_STAGE}")
+set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV}.${VERSION_BUILD}")
+
+# Declare project
+project (SplitSound VERSION ${VERSION} LANGUAGES CXX)
 
 message (STATUS "")
-message (STATUS "Building SplitSound v${VERSION}")
+message (STATUS "Building ${PROJECT_NAME} v${VERSION}")
 message (STATUS "")
 
 # Set build type if not provided
@@ -71,15 +70,13 @@ set (SS_LIBRARIES)
 
 # Link Windows specific libraries
 if (WIN32)
-    set (SS_LIBRARIES wsock32 ws2_32 iphlpapi)
+    set (SS_LIBRARIES ${SS_LIBRARIES} wsock32 ws2_32 iphlpapi)
 endif ()
 
 
 
 
 ######## Dependencies and Libs ########
-
-message (STATUS "Building required JRTP dependencies...\n")
 
 # Make sure libs build x64 if x64 flag is passed in
 if (WIN32 AND 64BIT)
@@ -98,32 +95,9 @@ endif ()
 
 if (SS_BUILD_JLIBS)
 
-    # Manually cmake and install JThread (required for JRTPLIB)
-    execute_process (COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jthread)
-    execute_process (COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jthread ${JFLAGS} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
-    )
-    execute_process (COMMAND ${CMAKE_COMMAND} --build . --target install
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jthread
-    )
-
-    message (STATUS "Built and installed JThread.")
-    message (STATUS "Continuing CMake generation...\n")
-
-    # Add JRTPLIB
-    message (STATUS "Building JRTPLIB dependency...\n")
-
-    # Manually cmake and install JRTPLIB
-    execute_process (COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/jrtplib)
-    execute_process (COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/jrtplib ${JFLAGS} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
-    )
-    execute_process (COMMAND ${CMAKE_COMMAND} --build . --target install
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jrtplib
-    )
-
-    message (STATUS "Built and installed JRTPLIB.")
-    message (STATUS "Continuing CMake generation...\n")
+    message (STATUS "Building required JRTP dependencies...\n")
+    generate_and_install_lib("JThread" "${JFLAGS}")
+    generate_and_install_lib("JRTPLIB" "${JFLAGS}")
 
 else ()
 
