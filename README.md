@@ -101,32 +101,25 @@ More instructions and pictures should be coming soon.
 Qt can be downloaded from https://www.qt.io/download. 
 If you don't plan to cross-compile, only the `msvc2017_64` (64 bit) and/or `msvc2015` (32 bit) libraries are needed.
 
-Once installed, add one of the following environment variables to Windows based on your choice of 32/64 bit [[help]](https://www.howtogeek.com/51807/how-to-create-and-use-global-system-environment-variables/).
+Once installed, add the following environment variables to Windows [[help]](https://www.howtogeek.com/51807/how-to-create-and-use-global-system-environment-variables/).
 ```
-QTDIR        C:\Your\Path\To\This\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5
-    OR
-QTDIR        C:\Your\Path\To\This\Qt\5.10.1\msvc2015\lib\cmake\Qt5
+QT_ROOT        C:\Your\Path\To\This\Qt\5.10.1
 ```
 
 If you prefer not to set the environment variable, you can also provide the Qt path directly when running CMake
 ```
-cmake .. -A x64 -DQt5_DIR="D:\jmcker\Installations\Qt\5.11.0\msvc2017_64\lib\cmake\Qt5"
-    OR
-cmake .. -DQt5_DIR="D:\jmcker\Installations\Qt\5.11.0\msvc2015\lib\cmake\Qt5"
+cmake .. -A x64 -DQT_ROOT="C:\Your\Path\To\This\Qt\5.10.1"
 ```
 
-To create a 32-bit build easily, we recommend setting both environment variables and tweaking the CMake command when desired:
-```
-QTDIR        C:\Your\Path\To\This\Qt\5.10.1\msvc2017_64\lib\cmake\Qt5
-QTDIR32      C:\Your\Path\To\This\Qt\5.10.1\msvc2015\lib\cmake\Qt5
-```
+To create a 32-bit build easily, all you need to do is tweak the CMake command when desired:
+
 ```
 cmake .. -A x64                     # Normal 64-bit build
-cmake .. -DQt5_DIR="$ENV:QTDIR32"   # 32-bit build, targeting 32-bit Qt installation
+cmake ..                            # 32-bit build
 ```
 
 Boost is required to build this project. It can be downloaded from https://dl.bintray.com/boostorg/release/1.67.0/binaries.
-It is recommended that you download either the `msvc-all-32-64` or `msvc-14.1-32 or msvc-14.1-32` depending on your Windows system.
+It is recommended that you download either the `msvc-all-32-64` or `msvc-14.1-32 or msvc-14.1-64` depending on your Windows system.
 
 Once installed, add the following environment variable to Windows
 ```
@@ -197,6 +190,13 @@ export QT_IMPORT_TRACE=1
 **Note**: Since we use some of the newer features of Qt Quick, we've found that Qt version 5.10+ is REQUIRED and is not supplied by the popular `apt` package manager on Ubuntu.
 You can check your Qt version by running `qmake -v`.
 
+If you are experiencing any problems with finding boost, check the following variables and make sure that they are pointing to the right directory
+
+```
+export BOOST_LIBRARYDIR=/Path/to/boost/lib64-msvc-14.1    # Path to boost libraries
+export BOOST_INCLUDE_DIRS=/Path/to/boost                  # Path to boost to indicate includes
+```
+
 ## Building ##
 
 The best option to keep your source clean is to perform an out-of-source build.
@@ -219,10 +219,10 @@ rm -r ./build
 The folder does not have to be named build and multiple build folders can coexist.
 For example (Windows):
 ```
-mkdir build-win32                   # Create directory for 32-bit build
-cd build-win32                      # Move into the directory
-cmake .. -DQt5_DIR="$ENV:QTDIR32"   # Call CMake on the upper source directory, specifying the path to the 32-bit Qt installation
-cmake --build .                     # Build the generated CMake files
+mkdir build-win32    # Create directory for 32-bit build
+cd build-win32       # Move into the directory
+cmake ..             # Call CMake on the upper source directory, specifying the path to the 32-bit Qt installation
+cmake --build .      # Build the generated CMake files
 
 cd ..
 
