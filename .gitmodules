@@ -10,3 +10,6 @@
 [submodule "src/libs/jthread"]
 	path = src/libs/jthread
 	url = https://github.com/symboxtra/jthread
+[submodule "cmake/cmake-GitVersioner"]
+	path = cmake/cmake-GitVersioner
+	url = https://github.com/symboxtra/cmake-GitVersioner

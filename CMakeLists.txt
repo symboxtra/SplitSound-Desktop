@@ -4,16 +4,20 @@ cmake_minimum_required (VERSION 3.5)
 
 include (cmake/Qt5.cmake)
 include (cmake/SplitSound.cmake)
+include (cmake/cmake-GitVersioner/GitVersioner.cmake)
+
+# Configure build number
+set (GIT_VERSIONER_LOCAL_CHANGES_ENABLED true)
 
 # Version
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 0)
 set (VERSION_REV 0)
-set (VERSION_BUILD 0)
+git_versioner_get_version(VERSION_BUILD)
 set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV}.${VERSION_BUILD}")
 
 # Declare project
-project (SplitSound VERSION ${VERSION} LANGUAGES CXX)
+project (SplitSound VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REV}" LANGUAGES CXX)
 
 message (STATUS "")
 message (STATUS "Building ${PROJECT_NAME} v${VERSION}")
