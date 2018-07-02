@@ -8,7 +8,7 @@ macro (qt5_post_build_windeployqt APP QMLDIR)
 
     find_program(WINDEPLOYQT_EXECUTABLE
         NAMES
-            "windepoyqt"
+            "windeployqt"
         PATHS
             "${QTBIN}"
 
