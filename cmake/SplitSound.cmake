@@ -3,10 +3,11 @@ function (generate_and_install_lib _name _generation_flags)
     set (PROCESS_RESULT 0)
 
     message (STATUS "Building and installing library ${_name} to ${CMAKE_INSTALL_PREFIX}...\n")
-
+    string (TOLOWER "${_name}" _name_lower)
+    
     # Manually generate and install
     execute_process (COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${_name})
-    execute_process (COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/${_name} ${_generation_flags} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+    execute_process (COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/src/libs/${_name_lower} ${_generation_flags} -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${_name}
         RESULT_VARIABLE PROCESS_RESULT
     )
