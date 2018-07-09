@@ -5,6 +5,8 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <string>
+
 #include <QQuickView>
 #include "QQmlBridge.h"
 
@@ -19,9 +21,10 @@ class MainWindow : public QQuickView
     public:
 
         MainWindow();
-        ~MainWindow();
+        virtual ~MainWindow();
 
         void addBridge(QScopedPointer<QQmlBridge> &bridge);
+        QObject * getProperty(std::string name);
 
 };
 

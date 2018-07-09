@@ -17,9 +17,10 @@ class QSplitSoundApplication : public QApplication
     public:
 
         QSplitSoundApplication(int& argc, char ** argv);
-        ~QSplitSoundApplication();
+        virtual ~QSplitSoundApplication();
 
         static QSplitSoundApplication * getInstance();
+        void close();
 
 };
 

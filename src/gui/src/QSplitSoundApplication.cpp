@@ -19,6 +19,11 @@ QSplitSoundApplication * QSplitSoundApplication::getInstance()
     return m_instance;
 }
 
+void QSplitSoundApplication::close()
+{
+    this->quit();
+}
+
 QSplitSoundApplication::~QSplitSoundApplication()
 {
 

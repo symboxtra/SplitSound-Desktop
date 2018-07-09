@@ -6,6 +6,8 @@
 
 #include "MainWindow.h"
 
+using namespace std;
+
 MainWindow::MainWindow()
 {
     setTitle("SplitSound");
@@ -19,6 +21,12 @@ MainWindow::MainWindow()
 void MainWindow::addBridge(QScopedPointer<QQmlBridge> &bridge)
 {
     rootContext()->setContextProperty(QString::fromStdString(bridge->getName()), bridge.data());
+}
+
+QObject * MainWindow::getProperty(string name)
+{
+    QObject * object = qvariant_cast<QObject *>(rootContext()->contextProperty(QString::fromStdString(name)));
+    return object;
 }
 
 MainWindow::~MainWindow()
