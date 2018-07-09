@@ -31,5 +31,5 @@ QObject * MainWindow::getProperty(string name)
 
 MainWindow::~MainWindow()
 {
-
+    ; // empty statement
 }

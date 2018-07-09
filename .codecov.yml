@@ -3,6 +3,14 @@ coverage:
     project: off
     patch: off
 
+flags:
+  gui:
+    paths:
+      - src/gui
+  tests:
+    paths:
+      - src/test
+
 codecov:
   ci:
     - symboxtra.dynu.net/jenkins
@@ -10,3 +18,4 @@ codecov:
 ignore:
     - "src/libs/"
     - "qt/"
+    - "**/main.cpp"

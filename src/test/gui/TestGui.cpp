@@ -3,7 +3,6 @@
 #include <future>
 #include <gtest/gtest.h>
 
-#include <QCoreApplication>
 #include <QTimer>
 
 #include "QSplitSoundApplication.h"
@@ -42,6 +41,12 @@ TEST_F(TestGui, intial_appCanStart)
     EXPECT_EQ(app->exec(), 0);
 }
 
+TEST_F(TestGui, initial_getInstance)
+{
+    QSplitSoundApplication * instance = app->getInstance();
+    EXPECT_EQ(instance, app);
+}
+
 TEST_F(TestGui, cppBridge_canAddAndRetrieve)
 {
     // Create bridge
@@ -50,8 +55,7 @@ TEST_F(TestGui, cppBridge_canAddAndRetrieve)
     mainWindow->addBridge(testBridge);
 
     QObject * objectFromContext = mainWindow->getProperty("testBridge");
-    QQmlBridge * testst;
-    QQmlBridge * bridgeFromContext = qobject_cast<QQmlBridge *>(objectFromContext);
+    QQmlBridge * bridgeFromContext = qobject_cast<decltype(bridgeFromContext)>(objectFromContext);
 
     EXPECT_EQ(testBridge->getName(), bridgeFromContext->getName());
 }
