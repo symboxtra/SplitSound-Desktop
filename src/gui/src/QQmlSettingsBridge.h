@@ -18,7 +18,7 @@ class QQmlSettingsBridge : public QQmlBridge
 
         QQmlSettingsBridge(std::string name);
 
-        Q_INVOKABLE void test();
+        Q_INVOKABLE bool test();
 
 };
 

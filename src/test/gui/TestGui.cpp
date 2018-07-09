@@ -8,6 +8,7 @@
 #include "QSplitSoundApplication.h"
 #include "MainWindow.h"
 #include "QQmlBridge.h"
+#include "QQmlSettingsBridge.h"
 
 class TestGui : public ::testing::Test {
 
@@ -58,4 +59,18 @@ TEST_F(TestGui, cppBridge_canAddAndRetrieve)
     QQmlBridge * bridgeFromContext = qobject_cast<decltype(bridgeFromContext)>(objectFromContext);
 
     EXPECT_EQ(testBridge->getName(), bridgeFromContext->getName());
+}
+
+TEST_F(TestGui, cppBridge_settingsBridge)
+{
+    // Create bridge
+    QScopedPointer<QQmlBridge> settingsBridge(new QQmlSettingsBridge("settingsBridge"));
+
+    mainWindow->addBridge(settingsBridge);
+
+    QObject * objectFromContext = mainWindow->getProperty("settingsBridge");
+    QQmlSettingsBridge * bridgeFromContext = qobject_cast<decltype(bridgeFromContext)>(objectFromContext);
+
+    EXPECT_EQ(settingsBridge->getName(), bridgeFromContext->getName());
+    EXPECT_TRUE(bridgeFromContext->test());
 }

@@ -57,7 +57,7 @@ set (T_GUI_DIR "${CMAKE_SOURCE_DIR}/src/gui")
 # Add the GUI tests to the bin directory instead of bin/test
 # GUI tests need the Qt dlls in bin
 if (SS_INCLUDE_GUI_TESTS)
-    create_test("${T_TEST_DIR}/gui/TestGui.cpp" "${T_GUI_DIR}/src/QSplitSoundApplication.cpp;${T_GUI_DIR}/src/MainWindow.cpp;${T_GUI_DIR}/src/QQmlBridge.cpp;${T_GUI_DIR}/res/SplitSound.qrc" -1)
+    create_test("${T_TEST_DIR}/gui/TestGui.cpp" "${T_GUI_DIR}/src/QSplitSoundApplication.cpp;${T_GUI_DIR}/src/MainWindow.cpp;${T_GUI_DIR}/src/QQmlBridge.cpp;${T_GUI_DIR}/src/QQmlSettingsBridge.cpp;${T_GUI_DIR}/res/SplitSound.qrc" -1)
 else ()
     message (STATUS "Ignoring GUI tests. Set SS_INCLUDE_GUI_TESTS=true to include.")
 endif ()

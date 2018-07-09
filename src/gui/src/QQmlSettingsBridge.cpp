@@ -10,7 +10,8 @@ using namespace std;
 QQmlSettingsBridge::QQmlSettingsBridge(string name) : QQmlBridge(name)
 {}
 
-void QQmlSettingsBridge::test()
+bool QQmlSettingsBridge::test()
 {
-    qDebug("Settings window opened");
+    qDebug("Settings bridge test.");
+    return true;
 }
