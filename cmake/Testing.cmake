@@ -16,9 +16,8 @@ function (create_test _test_file _src_files _timeout)
 
 endfunction ()
 
-# TODO: REMOVE TESTING WITH TRUE
-# Make gui tests opt-in
-# These tests can't be run on headless platforms (most CI servers)
+# Make gui tests opt-out
+# These tests can't be run on headless platforms
 if (NOT DEFINED SS_INCLUDE_GUI_TESTS)
     set (SS_INCLUDE_GUI_TESTS true)
 endif ()
@@ -59,6 +58,8 @@ set (T_GUI_DIR "${CMAKE_SOURCE_DIR}/src/gui")
 # GUI tests need the Qt dlls in bin
 if (SS_INCLUDE_GUI_TESTS)
     create_test("${T_TEST_DIR}/gui/TestGui.cpp" "${T_GUI_DIR}/src/QSplitSoundApplication.cpp;${T_GUI_DIR}/src/MainWindow.cpp;${T_GUI_DIR}/src/QQmlBridge.cpp;${T_GUI_DIR}/res/SplitSound.qrc" -1)
+else ()
+    message (STATUS "Ignoring GUI tests. Set SS_INCLUDE_GUI_TESTS=true to include.")
 endif ()
 
 # Output test executables to bin/test
@@ -69,4 +70,4 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 endforeach ()
 
 # Add more tests here using create_test()
-
+create_test("${T_TEST_DIR}/basic/TestQuickMaths.cpp" "" -1)
