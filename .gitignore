@@ -2,6 +2,7 @@
 build*/
 local*/
 OpenCppCoverageSetup.exe
+remove-function-lines.py
 
 .vscode
 .*.swp
