@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>images/headphones.svg</file>
+        <file>fonts/materialdesignicons-webfont.ttf</file>
+        <file>IconLabel.qml</file>
+        <file>fonts/Icon.js</file>
+        <file>CustomLabel.qml</file>
+        <file>Modal.qml</file>
+        <file>DefaultDialog.qml</file>
+        <file>ServerSearch.qml</file>
+        <file>CustomProgressBar.qml</file>
+        <file>HoverToolTip.qml</file>
+        <file>UserList.qml</file>
+        <file>ServerListJoined.qml</file>
+        <file>OverflowToolTip.qml</file>
+        <file>Constants.js</file>
+        <file>ServerListModel.qml</file>
+        <file>ServerListAvailable.qml</file>
+        <file>Settings.qml</file>
+        <file>InputSettings.qml</file>
+        <file>SettingsRow.qml</file>
+    </qresource>
+</RCC>

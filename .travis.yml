@@ -7,9 +7,17 @@ matrix:
           osx_image: xcode9.2
         - os: linux
           compiler: gcc
+          addons:
+            apt:
+                update: true
+
+cache:
+    directories:
+        - build/lib
+        - build/jthread
+        - build/jrtplib
 
 git:
-    depth: 1 # Limit unneeded commit depth
     submodules: false
 
 before_install:
@@ -22,19 +30,47 @@ install:
             brew update
             brew install qt
             brew install lcov
-            PATH=/usr/local/opt/qt/bin:${PATH}
+            brew install boost
+            export PATH=/usr/local/opt/qt/bin:${PATH}
         fi
     - |
         if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-            sudo apt update
-            sudo apt install qt5-default
-            sudo apt install lcov 
+            sudo apt install lcov
+
+            # Download Qt 5.10.1
+            echo
+            echo "Downloading Qt..."
+            curl -L https://www.dropbox.com/s/f1xo8wbypvax9hr/qt-portable-ubuntu-16.04-v2.tar.gz?dl=1 -o $HOME/qt-portable-ubuntu-16.04-v2.tar.gz
+            mkdir $HOME/qt
+            tar -xzf $HOME/qt-portable-ubuntu-16.04-v2.tar.gz -C $HOME/qt --strip-components 1
+
+            qt_version="5.10.1"
+            
+            export PATH=$HOME/qt/${qt_version}/gcc_64/bin:${PATH}
+            export LD_LIBRARY_PATH=$HOME/qt/${qt_version}/gcc_64/lib
+            export QT_PLUGIN_PATH=$HOME/qt/${qt_version}/gcc_64/plugins
+            export QML_IMPORT_PATH=$HOME/qt/${qt_version}/gcc_64/qml
+            export QML2_IMPORT_PATH=$HOME/qt/${qt_version}/gcc_64/qml
+            export QT_DEBUG_PLUGINS=1
+            export QT_IMPORT_TRACE=1
+
+            qmake -v
+            echo "Installed Qt ${qt_version}"
+
+            sudo apt install libboost-all-dev
         fi
 
 before_script:
-    - mkdir build
+    - mkdir -p build
     - cd build
-    - cmake ..
+    - |
+        if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+            cmake .. -DSS_INCLUDE_GUI_TESTS=true
+        fi
+    - |
+        if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+            cmake .. -DSS_INCLUDE_GUI_TESTS=false
+        fi
     - cd ..
 
 script:

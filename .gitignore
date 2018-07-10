@@ -2,7 +2,9 @@
 build*/
 local*/
 OpenCppCoverageSetup.exe
+remove-function-lines.py
 
+.vscode
 .*.swp
 
 ## Ignore Visual Studio temporary files, build results, and

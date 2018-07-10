@@ -1,2 +1,21 @@
+coverage:
+  status:
+    project: off
+    patch: off
+
+flags:
+  gui:
+    paths:
+      - src/gui
+  tests:
+    paths:
+      - src/test
+
+codecov:
+  ci:
+    - symboxtra.dynu.net/jenkins
+
 ignore:
-    - "src/libs/" 
+    - "src/libs/"
+    - "qt/"
+    - "**/main.cpp"
