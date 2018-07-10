@@ -41,6 +41,14 @@ cd SplitSound-Desktop
 git submodule update --init --recursive
 ```
 
+We also periodically pull updates into our submodules. This will usually coincide with a major or minor release.
+If you prefer, you can manually update the submodules on your branch with the latest commits on the remote using the command:
+```
+git submodule update --remote --merge
+```
+This will fetch any missing commits in all submodules and checkout the latest revision.
+These changes can be staged and committed by anyone, but we prefer that someone on the team verify that the submodule is ready to go.
+
 
 
 ## Branching ##
@@ -70,7 +78,7 @@ With a Qt installation, CMake, and the compiler of your choice, we hope there sh
 | Package Name | Version | Use |
 | :---: | :---: | :--- |
 | Qt | 5.10.0+ | Cross-platform GUI |
-| CMake | 3.6+ | Cross-platform 'Makefile' generator |
+| CMake | 3.5+ | Cross-platform 'Makefile' generator |
 | Boost | 1.6+ | Portable C++ thread libraries |
 
 #### Compilers ####
@@ -101,6 +109,12 @@ More instructions and pictures should be coming soon.
 Qt can be downloaded from https://www.qt.io/download. 
 If you don't plan to cross-compile, only the `msvc2017_64` (64 bit) and/or `msvc2015` (32 bit) libraries are needed.
 
+#### ENVIRONMENT WARNING ####
+If you do plan to compile 32-bit applications on a 64-bit OS, be sure to **keep the Qt 64-bit `bin` folder off `PATH`**.
+Even though we use an absolute path to call the 32-bit version of `windeployqt` when applicable, it insists on copying the 64-bit DLLs if the 64-bit `bin` folder is on `PATH`.
+
+----
+
 Once installed, add the following environment variables to Windows [[help]](https://www.howtogeek.com/51807/how-to-create-and-use-global-system-environment-variables/).
 ```
 QT_ROOT        C:\Your\Path\To\This\Qt\5.10.1
@@ -111,20 +125,54 @@ If you prefer not to set the environment variable, you can also provide the Qt p
 cmake .. -A x64 -DQT_ROOT="C:\Your\Path\To\This\Qt\5.10.1"
 ```
 
-To create a 32-bit build easily, all you need to do is tweak the CMake command when desired:
+Referring to `QT_ROOT` make switching between `x64` and `x86` builds as simple as changing a flag.
 
 ```
 cmake .. -A x64                     # Normal 64-bit build
 cmake ..                            # 32-bit build
 ```
 
-Boost is required to build this project. It can be downloaded from https://dl.bintray.com/boostorg/release/1.67.0/binaries.
-It is recommended that you download either the `msvc-all-32-64` or `msvc-14.1-32 or msvc-14.1-64` depending on your Windows system.
+But does come with a few caveats. We chose the `msvc2017_64` distribution for `x64` and the `msvc2015` distribution for `x86`.
+If these choices don't align with your Visual Studio installation, you'll need to modify the `######## Qt ########` section of the root `CMakeLists.txt`.
 
-Once installed, add the following environment variable to Windows
+We would be interested in implementing something waterfall-ish (see below), but chose to leave it out unless needed.
+
+```cmake
+if (WIN32 AND NOT DEFINED Qt5_DIR)
+    if(64BIT)
+        if (EXISTS "${QT_ROOT}\\msvc2017_64")
+            set (Qt5_DIR "${QT_ROOT}\\msvc2017_64\\lib\\cmake\\Qt5")
+        elseif (EXISTS "${QT_ROOT}\\msvc2015_64")
+            set (Qt5_DIR "${QT_ROOT}\\msvc2015_64\\lib\\cmake\\Qt5")
+            # Cascade any others you might need
+        endif ()
+    else ()
+        if (EXISTS "${QT_ROOT}\\msvc2015")
+            set (Qt5_DIR "${QT_ROOT}\\msvc2015\\lib\\cmake\\Qt5")
+        elseif (EXISTS "${QT_ROOT}\\msvc2013")
+            set (Qt5_DIR "${QT_ROOT}\\msvc2013\\lib\\cmake\\Qt5")
+            # Cascade any others you might need
+        endif ()
+    endif ()
+
+    message (STATUS "Qt5_DIR: ${Qt5_DIR}")
+endif ()
+```
+
+
+Boost is also required on all platforms. Prebuilt Windows binaries can be found at https://dl.bintray.com/boostorg/release/1.67.0/binaries.
+We currently use the `msvc-all-32-64` option to download all versions or just `msvc-14.1-32` and `msvc-14.1-64` depending on your system.
+
+Once installed, add the following environment variable to Windows:
 ```
 BOOST_ROOT        C:\Your\Path\To\boost
 ```
+
+or pass the following option to CMake:
+```
+cmake .. -DBOOST_ROOT="C:\Your\Path\To\boost"
+```
+
 
 #### OSX ####
 
@@ -164,7 +212,8 @@ As with OSX, Qt's `bin` directory should be on your path. Most package managers 
 
 If you're looking to setup Linux-based CI with Qt 5.10+, we've experienced the struggle and would be happy to assist [privately](mailto:dev.symboxtra@gmail.com).
 
-To install boost on linux just run the following command
+
+To install boost on Linux, run the following command:
 ```
 sudo apt install libboost-all-dev
 ```
@@ -190,12 +239,14 @@ export QT_IMPORT_TRACE=1
 **Note**: Since we use some of the newer features of Qt Quick, we've found that Qt version 5.10+ is REQUIRED and is not supplied by the popular `apt` package manager on Ubuntu.
 You can check your Qt version by running `qmake -v`.
 
-If you are experiencing any problems with finding boost, check the following variables and make sure that they are pointing to the right directory
+If you experience any problems finding boost, check the following variables and make sure they are correct for your system:
 
 ```
 export BOOST_LIBRARYDIR=/Path/to/boost/lib64-msvc-14.1    # Path to boost libraries
 export BOOST_INCLUDE_DIRS=/Path/to/boost                  # Path to boost to indicate includes
 ```
+
+
 
 ## Building ##
 
@@ -282,7 +333,8 @@ To mitigate this, CodeCov handles merging the results from each of the individua
 
 ### Dependencies ###
 - Qt 5.10+
-- CMake
+- Boost 1.6+
+- CMake 3.5+
 - C++ Compiler (MSVC, GCC, Apple Clang)
 
 ### Commands ###
@@ -292,7 +344,8 @@ cd SplitSound-Desktop
 git submodule update --init --recursive
 mkdir build
 cd build
-cmake ..
-cmake --build .
+cmake ..            # -A x64 for 64 bit
+cmake --build .   
+ctest -V            # Windows: ctest -C Debug -V
 ./bin/splitsound.exe
 ```
