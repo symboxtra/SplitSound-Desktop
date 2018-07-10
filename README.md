@@ -27,7 +27,7 @@ We aim to keep this an up-to-date resource for dependencies and build informatio
 
 ## Cloning ##
 
-There are submodules included in the project, so be sure to clone using `git clone --recurse-submodules` 
+There are submodules included in the project, so be sure to clone using `git clone --recurse-submodules`
 or call `git submodule update --init --recursive` inside the project once cloned.
 
 #### Example: ####
@@ -53,7 +53,7 @@ These changes can be staged and committed by anyone, but we prefer that someone 
 
 ## Branching ##
 
-Every feature/line of development should have its own branch. 
+Every feature/line of development should have its own branch.
 Unless you know what you're doing, this branch should typically be a direct child of the `master` branch (see example below).
 Releases accumulate in release branches before being merged into master.
 
@@ -71,7 +71,7 @@ git checkout -b add-crazy-new-feature   # Create your new branch
 
 ## Development ##
 
-Given the application's cross-platform nature, environment setup can get a bit tricky. 
+Given the application's cross-platform nature, environment setup can get a bit tricky.
 With a Qt installation, CMake, and the compiler of your choice, we hope there should be only a few strange quirks (but we know there shall be many).
 
 ### Requirements ###
@@ -93,7 +93,7 @@ With a Qt installation, CMake, and the compiler of your choice, we hope there sh
 ### Environment ###
 
 Our CMake build is compatible with the Qt Creator IDE, which provides nice auto-complete and debugging tools.
-Select the root `CMakeList.txt` when opening the project. 
+Select the root `CMakeList.txt` when opening the project.
 It's sometimes easiest to build once from the command line and then import that configured build.
 Qt Creator flips out a little bit when trying to generate the fresh CMake itself.
 
@@ -106,7 +106,7 @@ More instructions and pictures should be coming soon.
 
 #### Windows ####
 
-Qt can be downloaded from https://www.qt.io/download. 
+Qt can be downloaded from https://www.qt.io/download.
 If you don't plan to cross-compile, only the `msvc2017_64` (64 bit) and/or `msvc2015` (32 bit) libraries are needed.
 
 #### ENVIRONMENT WARNING ####
@@ -363,7 +363,7 @@ git submodule update --init --recursive
 mkdir build
 cd build
 cmake ..            # -A x64 for 64 bit
-cmake --build .   
+cmake --build .
 ctest -V            # Windows: ctest -C Debug -V
 ./bin/splitsound.exe
 ```
