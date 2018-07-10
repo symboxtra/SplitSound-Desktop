@@ -1,6 +1,7 @@
 ######## Config ########
 
 cmake_minimum_required (VERSION 3.5)
+set (CMAKE_CXX_STANDARD 11)
 
 include (cmake/Qt5.cmake)
 include (cmake/SplitSound.cmake)
