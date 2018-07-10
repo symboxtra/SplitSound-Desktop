@@ -247,6 +247,24 @@ export BOOST_INCLUDE_DIRS=/Path/to/boost                  # Path to boost to ind
 ```
 
 
+## CMake Generation ##
+There are a number of options that can be used to control aspects of the build.
+This list only includes some of the options we commonly use. There are many more provided by CMake.
+Any desired options should be passed to the `cmake` command at generation time.
+```
+cmake .. -DOPTION_1=false -DOPTION_2="Testing 123"
+```
+
+| Flag | Purpose | Acceptable Values |
+| :--- | :--- | :---: |
+| -A x64 | Specify use of the 64-bit CMake Generator Platform. | N/A |
+| CMAKE_BUILD_TYPE | Generate files for a specific build type build. | Debug, Release, RelWithDebInfo, MinSizeRel |
+| SS_BUILD_JLIBS | Enable/disable building and installing JRTPLIB and JThread during generation. | true, false |
+| SS_INCLUDE_GUI_TESTS | Enable/disable inclusion of GUI tests. These need to be excluded on some platforms that do not have access to an X server or display. | true, false |
+| QT_ROOT | Set the path to the Qt installation. | path |
+| BOOST_ROOT | Set the path to the boost installation. | path |
+
+
 
 ## Building ##
 
@@ -257,7 +275,7 @@ Hence the common set of commands:
 ```
 mkdir build         # Create the directory
 cd build            # Move into the directory
-cmake ..            # Call CMake on the upper source directory
+cmake ..            # Start CMake generation (with any options) on the upper source directory
 cmake --build .     # Build the generated CMake files
 ```
 
@@ -272,7 +290,7 @@ For example (Windows):
 ```
 mkdir build-win32    # Create directory for 32-bit build
 cd build-win32       # Move into the directory
-cmake ..             # Call CMake on the upper source directory, specifying the path to the 32-bit Qt installation
+cmake ..             # Call CMake on the upper source directory
 cmake --build .      # Build the generated CMake files
 
 cd ..
