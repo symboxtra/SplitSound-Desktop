@@ -77,7 +77,7 @@ script:
     - ./test
 
 after_success:
-    - bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports" # Collect coverage data
+    - bash <(curl -s https://codecov.io/bash) -F all -X gcov || echo "Codecov did not collect coverage reports" # Collect coverage data
     - curl https://raw.githubusercontent.com/symboxtra/travis-ci-discord-webhook/master/send.sh > send.sh && chmod +x send.sh
     - ./send.sh success $WEBHOOK_URL # Webhook to Discord
 

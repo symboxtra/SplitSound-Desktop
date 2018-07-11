@@ -50,7 +50,7 @@ on_success:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1
     - ps: if ($env:WEBHOOK_URL.length -ne 0) { ./send.ps1 success $env:WEBHOOK_URL } else { Write-Host "WEBHOOK_URL inaccessible." } # Send Discord Webhook only when secure env vars can be decrypted
     - ps: if ($env:CODECOV_TOKEN.length -ne 0) { codecov --root . --disable gcov -f build\cobertura-gui.xml -F gui -t $env:CODECOV_TOKEN } else { Write-Host "CODECOV_TOKEN inaccessible." } # Send coverage from gui tests
-    - ps: if ($env:CODECOV_TOKEN.length -ne 0) { codecov --root . --disable gcov -f build\cobertura.xml -t $env:CODECOV_TOKEN } else { Write-Host "CODECOV_TOKEN inaccessible." } # Send coverage from other tests
+    - ps: if ($env:CODECOV_TOKEN.length -ne 0) { codecov --root . --disable gcov -f build\cobertura.xml -F all -t $env:CODECOV_TOKEN } else { Write-Host "CODECOV_TOKEN inaccessible." } # Send coverage from other tests
 
 on_failure:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/symboxtra/appveyor-discord-webhook/master/send.ps1 -o send.ps1

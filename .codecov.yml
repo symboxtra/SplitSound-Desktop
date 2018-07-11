@@ -2,6 +2,8 @@ coverage:
   status:
     project: off
     patch: off
+    all:
+      flags: all
     gui:
       flags: gui
     tests:
