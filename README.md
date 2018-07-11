@@ -311,10 +311,25 @@ cmake --build . --config Release
 
 ## Testing ##
 
-Unit tests are managed via CTest and written using the Google Test framework. All test source is stored under the `src/test` directory.
-Each `.cpp` file in the directory is compiled and output to `bin/test`.
+Unit tests are written using the Google Test framework and managed via CTest. All tests are stored in the `src/test` directory.
 
-The tests can be run independently as normal executables or as a complete suite using:
+A quick intro to the Google Test framework can be found [here](https://github.com/google/googletest/blob/master/googletest/docs/primer.md#basic-assertions).
+
+To add a test, append to one of the existing test source files or create a new one. Test executables are added under `cmake/Testing.cmake` using the CMake `create_test` function.
+
+#### `create_test` Usage: ####
+```
+create_test("Path/to/test/source/file.cpp" "Path/to/other/class.cpp;Path/to/other/file.cpp" timeout)
+```
+
+If you are testing classes which have their implementation in the `.cpp` file, the `.cpp` files must be listed in the `create_test` command like above and below:
+```
+create_test("${T_TEST_DIR}/gui/TestGui.cpp" "${T_GUI_DIR}/src/QSplitSoundApplication.cpp;${T_GUI_DIR}/src/MainWindow.cpp;${T_GUI_DIR}/src/QQmlBridge.cpp;${T_GUI_DIR}/src/QQmlSettingsBridge.cpp;${T_GUI_DIR}/res/SplitSound.qrc" -1)
+```
+
+Feel free to add any variables (like `T_GUI_DIR`) that make your source list less repetitive.
+
+Once compiled, the tests can be run independently as normal executables or as a complete suite using:
 ```
 ctest -V
 ```
@@ -322,7 +337,7 @@ or (the configuration type is required on Windows)
 ```
 ctest -V -C Debug
 ```
-**Note**: **Must be in the `build` directory. NOT `bin`**
+**Note**: **Must be in the `build` directory. NOT `bin`.**
 
 ### Continuous Integration (CI) ###
 
