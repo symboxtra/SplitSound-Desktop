@@ -71,3 +71,4 @@ endforeach ()
 
 # Add more tests here using create_test()
 create_test("${T_TEST_DIR}/basic/TestQuickMaths.cpp" "" -1)
+create_test("${T_TEST_DIR}/net/TestBroad.cpp" "" -1)
