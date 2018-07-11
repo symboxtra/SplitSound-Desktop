@@ -1,3 +1,7 @@
+# Ignore when calculating language stats
+src/gui/res/fonts/* linguist-vendored
+
+
 ###############################################################################
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
