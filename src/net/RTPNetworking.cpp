@@ -9,14 +9,30 @@ void RTPNetworking::setup()
 {
 	try {
 
+		string broadIP = getBroadcastAddress()[0];
+		cout << "Broadcast Address: " << broadIP << endl;
+		uint32_t destIP;
+		if(inet_pton(AF_INET, broadIP.c_str(), &(destIP)) != 1)
+		{
+			exit(-1);
+		}
+
 		RTPUDPv4TransmissionParams transparams;
 		RTPSessionParams sessParams;
 
 		sessParams.SetOwnTimestampUnit(1.0 / 44100.0);
 		sessParams.SetAcceptOwnPackets(false);
+		sessParams.SetUsePollThread(true);
+		sessParams.SetNeedThreadSafety(true);
+
 		transParams.SetPortbase(RTPPort);
 		
 		status = session->Create(sessParams, &transParams);
+		checkError(status);
+
+		RTPIPv4Address broadAddr(destIP, RTPPort);
+		status = session->AddDestination(broadAddr);
+
 		checkError(status);
 
 		// Start sub threads

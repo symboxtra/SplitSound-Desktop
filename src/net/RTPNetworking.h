@@ -16,9 +16,12 @@
 #include <jrtplib3/rtplibraryversion.h>
 
 #include "Buffer.h"
+#include "BroadcastAddress.h"
 
 using namespace std;
 using namespace jrtplib;
+
+using byte = uint8_t;
 
 enum class AppPacket {LIST_ALL, INFO, ACCEPT, SR, RR, BYE};
 
@@ -32,6 +35,7 @@ class RTPNetworking
 
 	public:
 		static const Buffer<AppPacket> requestQ();
+		static const Buffer<byte*> networkPackets();
 
 		RTPNetworking();
 		setup();
