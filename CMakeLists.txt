@@ -181,6 +181,8 @@ if (WIN32 AND NOT DEFINED QT_ROOT)
     else ()
         message (FATAL_ERROR "QT_ROOT environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DQT_ROOT=C:\\path\\to\\qt\\5.XX.X")
     endif ()
+elseif (NOT DEFINED QT_ROOT)
+	set (QT_ROOT $ENV{QT_ROOT} CACHE STRING "Path to Qt Installation")
 endif ()
 
 message (STATUS "QT_ROOT: " ${QT_ROOT} "\n")
@@ -192,8 +194,11 @@ if (WIN32 AND NOT DEFINED Qt5_DIR)
         set (Qt5_DIR "${QT_ROOT}\\msvc2015\\lib\\cmake\\Qt5")
     endif ()
     
-    message (STATUS "Qt5_DIR: ${Qt5_DIR}")
+elseif (NOT DEFINED Qt5_DIR)
+	set (Qt5_DIR "${QT_ROOT}/gcc_64/lib/cmake/Qt5")
 endif ()
+
+message (STATUS "Qt5_DIR: ${Qt5_DIR}")
 
 # Required Qt packages
 find_package (Qt5 REQUIRED
