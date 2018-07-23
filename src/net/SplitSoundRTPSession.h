@@ -19,13 +19,14 @@
 #include "RTPNetworking.h"
 
 using namespace std;
+using namespace jrtplib;
 using byte = uint8_t;
 
 class SplitSoundRTPSession : public RTPSession
 {
 	public:
 		SplitSoundRTPSession();
-		void OnAPPPacket(RTCPCompoundPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress);
+		void OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress);
 		~SplitSoundRTPSession();
 };
 

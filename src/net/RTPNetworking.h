@@ -14,9 +14,11 @@
 #include <jrtplib3/rtpsessionparams.h>
 #include <jrtplib3/rtperrors.h>
 #include <jrtplib3/rtplibraryversion.h>
+#include <jrtplib3/rtppacket.h>
 
 #include "Buffer.h"
-#include "BroadcastAddress.h"
+//#include "BroadcastAddress.h"
+#include "SplitSoundRTPSession.h"
 
 using namespace std;
 using namespace jrtplib;
@@ -30,16 +32,16 @@ class RTPNetworking
 	private:
 		const int RTCPPort = 6004;
 		const int RTPPort = 8000;
-		RTPSession* session;
+		SplitSoundRTPSession* session;
 
 
 	public:
-		static const Buffer<AppPacket> requestQ();
-		static const Buffer<byte*> networkPackets();
+		static const Buffer<AppPacket> requestQ;
+		static const Buffer<byte*> networkPackets;
 
 		RTPNetworking();
-		setup();
-		checkError(int err);
+		void setup();
+		void checkError(int err);
 		~RTPNetworking();
 };
 

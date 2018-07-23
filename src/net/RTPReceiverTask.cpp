@@ -1,6 +1,6 @@
 #include "RTPReceiverTask.h"
 
-RTPReceiverTask::RTPReceiverTask(RTPSession* session)
+RTPReceiverTask::RTPReceiverTask(SplitSoundRTPSession* session)
 {
 	sess = session;
 	boost::thread(&RTPReceiverTask::run, this);
@@ -13,16 +13,16 @@ void RTPReceiverTask::run()
 		{
 			sess->BeginDataAccess();
 
-			if(sess.GotoFirstSourceWithData())
+			if(sess->GotoFirstSourceWithData())
 			{
 				do {
-					RTPPacket *pack = NULL;
-					while((pack = sess.GetNextPacket()) != NULL)
+					RTPPacket* packet = NULL;
+					while((packet = sess->GetNextPacket()) != NULL)
 					{
-						byte* buffer = pack->GetPayloadData();
-						RTPNetworking::networkPackets().add(buffer);
+						byte* buffer = packet->GetPayloadData();
+						//networkPackets.add(buffer);
 					}
-				} while(sess.GotoNextSourceWithData());
+				} while(sess->GotoNextSourceWithData());
 			}
 		}
 	}catch(boost::thread_interrupted& inter)

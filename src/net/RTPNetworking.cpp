@@ -1,23 +1,26 @@
 #include "RTPNetworking.h"
+#include "RTPReceiverTask.h"
 
 RTPNetworking::RTPNetworking()
 {
-	boost::thread(&RTPNetworking::setup, this);
+	//boost::thread(&RTPNetworking::setup, this);
 }
 
 void RTPNetworking::setup()
 {
 	try {
 
-		string broadIP = getBroadcastAddress()[0];
+		int status = 0;
+
+		/*string broadIP = getBroadcastAddress()[0];
 		cout << "Broadcast Address: " << broadIP << endl;
 		uint32_t destIP;
 		if(inet_pton(AF_INET, broadIP.c_str(), &(destIP)) != 1)
 		{
 			exit(-1);
-		}
+		}*/
 
-		RTPUDPv4TransmissionParams transparams;
+		RTPUDPv4TransmissionParams transParams;
 		RTPSessionParams sessParams;
 
 		sessParams.SetOwnTimestampUnit(1.0 / 44100.0);
@@ -26,7 +29,14 @@ void RTPNetworking::setup()
 		sessParams.SetNeedThreadSafety(true);
 
 		transParams.SetPortbase(RTPPort);
-		
+
+		status = session->Create(sessParams, &transParams);
+		checkError(status);
+
+		// Start sub threads
+		RTPReceiverTask* rtpReceiver = new RTPReceiverTask(session);
+
+/*
 		status = session->Create(sessParams, &transParams);
 		checkError(status);
 
@@ -40,11 +50,12 @@ void RTPNetworking::setup()
 		RTCPReceiverTask* rtcpReceiver = new RTCPReceiverTask(session);
 		
 		RTPSessionTask* rtpTask = new RTPSessionTask(session);
-		RTCPSessionTask* rtcpTask = new RTCPSessionTask(session);
+		RTCPSessionTask* rtcpTask = new RTCPSessionTask(session);*/
 
 	} catch(boost::thread_interrupted& inter){
 	}
 }
+
 
 void RTPNetworking::checkError(int err)
 {

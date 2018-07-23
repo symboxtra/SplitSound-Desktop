@@ -14,14 +14,16 @@ using namespace jrtplib;
 
 using byte = uint8_t;
 
+
+//extern Buffer<byte*> RTPNetworking::networkPackets;
 class RTPReceiverTask
 {
 	private:
 		RTPSession* sess;
 
 	public:
-		RTPReceiverTask();
-		run();
+		RTPReceiverTask(SplitSoundRTPSession* session);
+		void run();
 		~RTPReceiverTask();
 };
 

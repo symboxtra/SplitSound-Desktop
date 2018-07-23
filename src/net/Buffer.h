@@ -16,7 +16,7 @@ class Buffer
 	private:
 		deque<pair<T, int>>bufferList;
 
-		condition_varirable cond;
+		condition_variable cond;
 		mutex mutex_lock;
 
 	public:
@@ -49,7 +49,7 @@ class Buffer
 			locker.unlock();
 			cond.notify_one();
 
-			return temp;
+			return back;
 		}
 
 		bool isEmpty()

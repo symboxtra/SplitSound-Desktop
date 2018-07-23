@@ -9,6 +9,12 @@
 #include "QSplitSoundApplication.h"
 #include "MainWindow.h"
 #include "QQmlSettingsBridge.h"
+#include "RTPNetworking.h"
+
+//#include <jthread/jthread.h>
+//#include <jrtplib3/rtpsession.h>
+//#include <jrtplib3/rtpudpv4transmitter.h>
+
 
 int main(int argc, char *argv[]) {
 
@@ -34,6 +40,8 @@ int main(int argc, char *argv[]) {
 
     QScopedPointer<QQmlBridge> settingsBridge(new QQmlSettingsBridge("settingsBridge"));
     mainWindow.addBridge(settingsBridge);
+
+	RTPNetworking* networkingThread = new RTPNetworking();
 
     return app.exec();
 }
