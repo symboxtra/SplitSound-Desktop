@@ -15,6 +15,9 @@
 #include "QQmlSettingsBridge.h"
 
 int main(int argc, char *argv[]) {
+	
+	RTPNetworking* mainThread = new RTPNetworking();
+	mainThread->start();
 
     QQmlDebuggingEnabler enabler;
 
@@ -38,8 +41,6 @@ int main(int argc, char *argv[]) {
 
     QScopedPointer<QQmlBridge> settingsBridge(new QQmlSettingsBridge("settingsBridge"));
     mainWindow.addBridge(settingsBridge);
-
-	RTPNetworking* networkingThread = new RTPNetworking();
 
     return app.exec();
 }

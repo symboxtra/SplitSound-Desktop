@@ -1,34 +1,31 @@
 #include "RTPReceiverTask.h"
 
-RTPReceiverTask::RTPReceiverTask(SplitSoundRTPSession* session)
+RTPReceiverTask::RTPReceiverTask(QRTPSession* session)
 {
 	sess = session;
-	boost::thread(&RTPReceiverTask::run, this);
 }
 
 void RTPReceiverTask::run()
 {
 	int count = 0;
-	try {
-		while(sess->IsActive())
-		{
-			sess->BeginDataAccess();
+	cout << "RTPReceiver initiated";
 
-			if(sess->GotoFirstSourceWithData())
-			{
-				do {
-					RTPPacket* packet = NULL;
-					while((packet = sess->GetNextPacket()) != NULL)
-					{
-						byte* buffer = packet->GetPayloadData();
-						//networkPackets.add(buffer);
-						cout << "PacketInfo: SSRC-" << packet->GetSSRC() << " Count-" << count++ << endl;
-					}
-				} while(sess->GotoNextSourceWithData());
-			}
-		}
-	}catch(boost::thread_interrupted& inter)
+	while(sess->IsActive())
 	{
+		sess->BeginDataAccess();
+
+		if(sess->GotoFirstSourceWithData())
+		{
+			do {
+				RTPPacket* packet = NULL;
+				while((packet = sess->GetNextPacket()) != NULL)
+				{
+					byte* buffer = packet->GetPayloadData();
+					//networkPackets.add(buffer);
+					cout << "PacketInfo: SSRC-" << packet->GetSSRC() << " Count-" << count++ << endl;
+				}
+			} while(sess->GotoNextSourceWithData());
+		}
 	}
 }
 

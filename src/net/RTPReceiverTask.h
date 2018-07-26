@@ -5,7 +5,7 @@
 #include <thread>
 #include <string>
 
-#include <boost/thread.hpp>
+#include <QThread>
 
 #include "RTPNetworking.h"
 
@@ -14,16 +14,14 @@ using namespace jrtplib;
 
 using byte = uint8_t;
 
-
-//extern Buffer<byte*> RTPNetworking::networkPackets;
-class RTPReceiverTask
+class RTPReceiverTask : public QThread
 {
 	private:
-		RTPSession* sess;
+		QRTPSession* sess;
+		void run();
 
 	public:
-		RTPReceiverTask(SplitSoundRTPSession* session);
-		void run();
+		RTPReceiverTask(QRTPSession* session);
 		~RTPReceiverTask();
 };
 

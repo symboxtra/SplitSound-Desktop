@@ -1,13 +1,14 @@
-#include "SplitSoundRTPSession.h"
+#include "QRTPSession.h"
 
-SplitSoundRTPSession::SplitSoundRTPSession()
+QRTPSession::QRTPSession()
 {
 }
 
-void SplitSoundRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress)
+void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress)
 {
+/*
 	vector<byte> myVector("SYSS".begin(), "SYSS".end());
-	
+
 	if(!pack->GetName() == &myVector[0])
 	{
 		byte* packetData = pack->GetAPPData();
@@ -46,8 +47,10 @@ void SplitSoundRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& recei
 		{
 		}
 	}
+*/
 }
 
-SplitSoundRTPSession::~SplitSoundRTPSession()
+
+QRTPSession::~QRTPSession()
 {
 }
