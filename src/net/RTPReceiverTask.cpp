@@ -8,6 +8,7 @@ RTPReceiverTask::RTPReceiverTask(SplitSoundRTPSession* session)
 
 void RTPReceiverTask::run()
 {
+	int count = 0;
 	try {
 		while(sess->IsActive())
 		{
@@ -21,6 +22,7 @@ void RTPReceiverTask::run()
 					{
 						byte* buffer = packet->GetPayloadData();
 						//networkPackets.add(buffer);
+						cout << "PacketInfo: SSRC-" << packet->GetSSRC() << " Count-" << count++ << endl;
 					}
 				} while(sess->GotoNextSourceWithData());
 			}
