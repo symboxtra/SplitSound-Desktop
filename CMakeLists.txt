@@ -72,6 +72,8 @@ set (SS_LIBRARIES)
 # Link Windows specific libraries
 if (WIN32)
     set (SS_LIBRARIES ${SS_LIBRARIES} wsock32 ws2_32 iphlpapi)
+else ()
+	set (SS_LIBRARIES ${SS_LIBRARIES} lpthread lm)
 endif ()
 
 
