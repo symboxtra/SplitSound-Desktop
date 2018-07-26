@@ -2,6 +2,8 @@
  *  Created by Jack McKernan on 5/8/2018.
  */
 
+#include "RTPNetworking.h"
+
 #include <QQuickStyle>
 #include <QFontDatabase>
 #include <QQmlDebuggingEnabler>
@@ -9,12 +11,6 @@
 #include "QSplitSoundApplication.h"
 #include "MainWindow.h"
 #include "QQmlSettingsBridge.h"
-#include "RTPNetworking.h"
-
-//#include <jthread/jthread.h>
-//#include <jrtplib3/rtpsession.h>
-//#include <jrtplib3/rtpudpv4transmitter.h>
-
 
 int main(int argc, char *argv[]) {
 
