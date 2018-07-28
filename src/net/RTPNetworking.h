@@ -35,7 +35,7 @@ class RTPNetworking : public QThread
 
 	private:
 		const int RTCPPort = 6004;
-		const int RTPPort = 8004;
+		const int RTPPort = 8000;
 		QRTPSession session;
 		void run();
 

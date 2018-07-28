@@ -37,6 +37,33 @@ void RTPNetworking::run()
 	QRTPSession sess;
 	status = sess.Create(sessParams, &transParams);
 	checkError(status);
+
+	uint32_t destIP;
+	string ip = "127.0.0.1";
+	if(inet_pton(AF_INET, ip.c_str(), &(destIP)) != 1)
+	{
+		exit(-1);
+	}
+
+	status = sess.AddDestination(RTPIPv4Address(ntohl(destIP), RTPPort));
+	checkError(status);
+
+	sess.BeginDataAccess();
+
+	while(sess.IsActive())
+	{
+		if(sess.GotoFirstSourceWithData())
+		{
+			do {
+				RTPPacket* pack = NULL;
+
+				while((pack = sess.GetNextPacket()) != NULL)
+				{
+					cout << "Damn";
+				}
+			} while(sess.GotoNextSourceWithData());
+		}
+	}
 }
 
 void RTPNetworking::checkError(int err)

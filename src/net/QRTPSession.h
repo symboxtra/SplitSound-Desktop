@@ -26,11 +26,11 @@ class QRTPSession : public QObject, public jrtplib::RTPSession
 	public:
 		QRTPSession();
 		~QRTPSession();
-		void OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress);	
-		void OnRTPPacket(RTPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderAddress);
 
 	private:
-		int count;
+		int count = 0;
+		void OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress);	
+		void OnRTPPacket(RTPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderAddress);
 };
 
 #endif

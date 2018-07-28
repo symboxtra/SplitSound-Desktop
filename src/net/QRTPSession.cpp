@@ -2,7 +2,6 @@
 
 QRTPSession::QRTPSession()
 {
-	count = 0;
 }
 
 void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress)
@@ -53,8 +52,6 @@ void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, c
 
 void QRTPSession::OnRTPPacket(RTPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderAddress)
 {
-	//cout << "PacketInfo: SSRC-" << pack->GetSSRC() <<  " Count-" << count++ << endl;
-
 	byte* buffer = pack->GetPayloadData();
 	cout << count++ << endl;
 }
