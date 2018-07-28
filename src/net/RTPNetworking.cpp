@@ -15,6 +15,11 @@ void RTPNetworking::run()
 		exit(-1);
 	}*/
 
+	#ifdef RTP_SOCKETTYPE_WINSOCK
+		WSADATA dat;
+		WSAStartup(MAKEWORD(2, 2), &dat);
+	#endif
+
 	int status = 0;
 	cout << "Main thread initiated" << endl;
 	setPriority(QThread::HighestPriority);
