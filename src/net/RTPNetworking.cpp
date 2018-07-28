@@ -28,7 +28,7 @@ void RTPNetworking::run()
 	RTPSessionParams sessParams;
 
 	sessParams.SetOwnTimestampUnit(1.0 / 44100.0);
-	sessParams.SetAcceptOwnPackets(false);
+	sessParams.SetAcceptOwnPackets(true);
 	sessParams.SetUsePollThread(true);
 	sessParams.SetNeedThreadSafety(true);
 
@@ -37,10 +37,6 @@ void RTPNetworking::run()
 	QRTPSession sess;
 	status = sess.Create(sessParams, &transParams);
 	checkError(status);
-
-	// Start sub threads
-	RTPReceiverTask* receiver = new RTPReceiverTask(&session);
-	receiver->start();
 }
 
 void RTPNetworking::checkError(int err)
