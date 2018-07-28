@@ -11,6 +11,7 @@ import "Constants.js" as Constants
 
 Popup {
     id: modal
+    objectName: "modal"
 
     Material.theme: parent.Material.theme
     Material.accent: parent.Material.accent
@@ -95,6 +96,8 @@ Popup {
     // close button (x)
     Button {
         id: upper_close_button
+        objectName: "upper_close_button"
+
         anchors.top: parent.top
         anchors.right: parent.right
 

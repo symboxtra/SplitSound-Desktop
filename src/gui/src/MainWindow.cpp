@@ -3,6 +3,8 @@
  */
 
 #include <QQmlContext>
+#include <QQuickItem>
+#include <QQmlProperty>
 
 #include "MainWindow.h"
 
@@ -23,11 +25,37 @@ void MainWindow::addBridge(QScopedPointer<QQmlBridge> &bridge)
     rootContext()->setContextProperty(QString::fromStdString(bridge->getName()), bridge.data());
 }
 
-QObject * MainWindow::getProperty(string name)
+QObject * MainWindow::getContextProperty(string propertyName)
 {
-    QObject * object = qvariant_cast<QObject *>(rootContext()->contextProperty(QString::fromStdString(name)));
+    QObject * object = qvariant_cast<QObject *>(rootContext()->contextProperty(QString::fromStdString(propertyName)));
     return object;
 }
+
+/*!
+ * To be successfully found, the QML object must have property objectName: "someName"
+ *
+*/
+QObject * MainWindow::getContextObject(string objectName)
+{
+    QObject * object = rootObject()->findChild<QObject *>(QString::fromStdString(objectName));
+
+    if (object == NULL)
+    {
+        string warning = "QML object '" + objectName + "' was not found. Be sure to include the property objectName: \"someName\".";
+        qDebug(warning.c_str());
+    }
+
+    return object;
+}
+
+QVariant MainWindow::getProperty(string objectName, string propertyName)
+{
+    QObject * object = getContextObject(objectName);
+    QVariant prop = QQmlProperty::read(object, QString::fromStdString(propertyName));
+
+    return prop;
+}
+
 
 MainWindow::~MainWindow()
 {

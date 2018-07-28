@@ -26,5 +26,5 @@ void QSplitSoundApplication::close()
 
 QSplitSoundApplication::~QSplitSoundApplication()
 {
-    ; // empty statement
+    m_instance = NULL;
 }

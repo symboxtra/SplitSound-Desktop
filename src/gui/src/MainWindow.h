@@ -8,6 +8,9 @@
 #include <string>
 
 #include <QQuickView>
+#include <QObject>
+#include <QVariant>
+
 #include "QQmlBridge.h"
 
 class QSplitSoundApplication;
@@ -24,7 +27,9 @@ class MainWindow : public QQuickView
         virtual ~MainWindow();
 
         void addBridge(QScopedPointer<QQmlBridge> &bridge);
-        QObject * getProperty(std::string name);
+        QObject * getContextProperty(std::string propertyName);
+        QObject * getContextObject(std::string objectName);
+        QVariant getProperty(std::string objectName, std::string propertyName);
 
 };
 

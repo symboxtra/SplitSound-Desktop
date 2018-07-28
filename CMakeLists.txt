@@ -273,6 +273,8 @@ target_link_libraries(splitsound ${SS_LIBRARIES})
 # This became a problem sometime after CMake v3.11.0-rc1
 add_custom_command (TARGET splitsound PRE_BUILD
    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/splitsound_autogen)
+add_custom_command (TARGET splitsound PRE_BUILD
+   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/TestGui_autogen)
 
 # Turn off coverage flags
 set (CMAKE_CXX_FLAGS "${CXX_FLAGS_NOCOV}")

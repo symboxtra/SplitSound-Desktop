@@ -25,6 +25,7 @@ Rectangle {
 
     Settings {
         id: settings_modal
+        objectName: "settings_modal"
         visible: false
     }
 
@@ -107,6 +108,8 @@ Rectangle {
 
         Button {
             id: center_circle
+            objectName: "center_circle"
+
             anchors.centerIn: parent
 
             antialiasing: true
@@ -303,6 +306,7 @@ Rectangle {
 
             Button {
                 id: footer_disconnect_button
+
                 anchors.left: connected_label.right
                 anchors.leftMargin: 3
                 anchors.verticalCenter: parent.verticalCenter
@@ -318,6 +322,8 @@ Rectangle {
                 }
 
                 MouseArea {
+                    objectName: "footer_disconnect_mouse_area"
+
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
 
@@ -382,6 +388,8 @@ Rectangle {
 
         InputSettings {
             id: input_selector_modal
+            objectName: "input_selector_modal"
+
             parent: parent
 
             modal: false
@@ -401,6 +409,8 @@ Rectangle {
 
             Button {
                 id: settings_trigger
+                objectName: "settings_trigger"
+
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: input_selector_trigger.left
                 anchors.rightMargin: 10
@@ -410,8 +420,8 @@ Rectangle {
                 }
 
                 onClicked: {
-                    settingsBridge.test()
                     settings_modal.visible = !settings_modal.visible
+                    settingsBridge.test()
                 }
 
                 HoverToolTip {
@@ -421,6 +431,8 @@ Rectangle {
 
             Button {
                 id: input_selector_trigger
+                objectName: "input_selector_trigger"
+
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: volume_slider.left
                 anchors.rightMargin: 10
