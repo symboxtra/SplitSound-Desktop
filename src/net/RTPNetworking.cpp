@@ -30,9 +30,17 @@ void RTPNetworking::run()
 	sessparams.SetUsePollThread(true);
 
 	transparams.SetPortbase(8000);
+	transparams.SetForcedRTCPPort(6002);
+	//transparams.SetReceiveMode(RTPTransmitter::AcceptSome);
+	//transparams.SetRTCPMultiplexing(true);
 
 	status = sess.Create(sessparams, &transparams);
 	checkError(status);
+
+	RTPUDPv4TransmissionInfo *pInfo = static_cast<RTPUDPv4TransmissionInfo *>(sess.GetTransmissionInfo());
+
+	cout << "RTP Port: " << pInfo->GetRTPPort() << endl;
+	cout << "RTCP Port: " << pInfo->GetRTCPPort() << endl;
 
 	while (sess.IsActive())
 	{

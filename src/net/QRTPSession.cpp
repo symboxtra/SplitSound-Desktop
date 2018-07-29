@@ -9,6 +9,8 @@ void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, c
 {
 	//string appName(pack->GetName()); 
 	string appName(reinterpret_cast<char*>(pack->GetName()));
+
+	cout << "Got a packet" << endl;
 	
 	if(!appName.compare("SYSS"))
 	{	
@@ -27,7 +29,7 @@ void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, c
 		if(!command.compare("PROVIDE_SERVER_INFO"))
 		{
 			//if(RTPNetworking::isServer())
-				//RTPNetworking::requestQ().add(AppPacket::INFO, stoi(senderSSRC));
+			RTPNetworking::requestQ().add(AppPacket::INFO, stoi(senderSSRC));
 		}
 		else if(!command.compare("SERVER_INFO"))
 		{
@@ -49,6 +51,20 @@ void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, c
 		{
 		}
 	}
+}
+
+void QRTPSession::OnRTCPCompoundPacket(RTCPCompoundPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress)
+{
+	cout << "Got something" << endl;
+	pack->GotoFirstPacket();
+
+	RTCPPacket* rtcpPack = NULL;
+
+	while((rtcpPack = pack->GetNextPacket()) != NULL)
+	{
+		cout << rtcpPack->GetPacketType() << ",";
+	}
+	cout << endl;
 }
 
 void QRTPSession::OnRTPPacket(RTPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderAddress)

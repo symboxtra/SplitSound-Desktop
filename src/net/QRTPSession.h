@@ -13,6 +13,8 @@
 #include <jrtplib3/rtperrors.h>
 #include <jrtplib3/rtcpapppacket.h>
 #include <jrtplib3/rtppacket.h>
+#include <jrtplib3/rtcpcompoundpacket.h>
+#include <jrtplib3/rtcppacket.h>
 
 using namespace std;
 using namespace jrtplib;
@@ -32,7 +34,8 @@ class QRTPSession : public QObject, public RTPSession
 
 	private:
 		int count = 0;
-		void OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress);	
+		void OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress);
+		void OnRTCPCompoundPacket(RTCPCompoundPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderaddress);	
 		void OnRTPPacket(RTPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderAddress);
 };
 
