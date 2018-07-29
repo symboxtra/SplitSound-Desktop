@@ -22,6 +22,8 @@ void RTPNetworking::run()
 
 	int status = 0;
 
+	QRTPSession sess;
+	
 	sessparams.SetOwnTimestampUnit(1.0 / 44100.0);
 	sessparams.SetAcceptOwnPackets(true);
 	sessparams.SetNeedThreadSafety(true);

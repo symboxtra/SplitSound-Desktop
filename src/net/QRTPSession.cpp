@@ -1,4 +1,5 @@
 #include "QRTPSession.h"
+#include "RTPNetworking.h"
 
 QRTPSession::QRTPSession()
 {
@@ -26,7 +27,7 @@ void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, c
 		if(!command.compare("PROVIDE_SERVER_INFO"))
 		{
 			//if(RTPNetworking::isServer())
-				//RTPNetworking::requestQ.add(AppPacket::INFO, stoi(senderSSRC));
+				//RTPNetworking::requestQ().add(AppPacket::INFO, stoi(senderSSRC));
 		}
 		else if(!command.compare("SERVER_INFO"))
 		{
@@ -53,6 +54,8 @@ void QRTPSession::OnAPPPacket(RTCPAPPPacket* pack, const RTPTime& receiveTime, c
 void QRTPSession::OnRTPPacket(RTPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderAddress)
 {
 	byte* buffer = pack->GetPayloadData();
+	//RTPNetworking::networkP.add(buffer);
+	RTPNetworking::networkPackets().add(buffer);
 	cout << count++ << endl;
 }
 

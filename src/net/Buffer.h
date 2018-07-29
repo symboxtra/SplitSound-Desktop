@@ -1,5 +1,5 @@
-#ifndef BUFFER
-#define BUFFER
+#ifndef BUFFER_H
+#define BUFFER_H
 
 #include <string>
 #include <mutex>
@@ -9,6 +9,8 @@
 #include <deque>
 
 using namespace std;
+
+using byte = uint8_t;
 
 template<typename T>
 class Buffer
@@ -64,4 +66,4 @@ class Buffer
 		}
 };
 
-#endif
+#endif // BUFFER_H

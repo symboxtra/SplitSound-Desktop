@@ -1,8 +1,8 @@
-#ifndef RTP_NETWORK
-#define RTP_NETWORK
-
+#ifndef RTP_NETWORK_H
+#define RTP_NETWORK_H
 
 #include <iostream>
+#include <utility>
 #include <thread>
 #include <mutex>
 #include <string>
@@ -37,19 +37,18 @@ class RTPNetworking : public QThread
 		const int RTCPPort = 6004;
 		const int RTPPort = 8000;
 
-		QRTPSession sess;	
 		RTPUDPv4TransmissionParams transparams;
 		RTPSessionParams sessparams;
 
 		void run();
 
 	public:
-		static const Buffer<AppPacket> requestQ;
-		static const Buffer<byte*> networkPackets;
+		static Buffer<byte*>& networkPackets() {static Buffer<byte*> np; return np;}
+		static Buffer<AppPacket>& requestQ() {static Buffer<AppPacket> rq; return rq;}
 
 		RTPNetworking();
 		void checkError(int err);
 		~RTPNetworking();
 };
 
-#endif
+#endif // RTP_NETWORK_H

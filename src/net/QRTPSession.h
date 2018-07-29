@@ -1,5 +1,5 @@
-#ifndef QRTP
-#define QRTP
+#ifndef QRTPSESSION_H
+#define QRTPSESSION_H
 
 #include <vector>
 #include <iostream>
@@ -19,13 +19,16 @@ using namespace jrtplib;
 
 using byte = uint8_t;
 
-class QRTPSession : public QObject, public jrtplib::RTPSession
+class QRTPSession : public QObject, public RTPSession
 {
 	Q_OBJECT
 
 	public:
+		int totalParticipants;
+
 		QRTPSession();
 		~QRTPSession();
+		int getNumParticipants();
 
 	private:
 		int count = 0;
@@ -33,4 +36,4 @@ class QRTPSession : public QObject, public jrtplib::RTPSession
 		void OnRTPPacket(RTPPacket* pack, const RTPTime& receiveTime, const RTPAddress* senderAddress);
 };
 
-#endif
+#endif // QRTPSESSION_H
