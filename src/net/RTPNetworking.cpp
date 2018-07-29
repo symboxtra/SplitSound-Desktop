@@ -18,51 +18,23 @@ void RTPNetworking::run()
 	#ifdef RTP_SOCKETTYPE_WINSOCK
 		WSADATA dat;
 		WSAStartup(MAKEWORD(2, 2), &dat);
-	#endif
+	#endif // RTP_SOCKETTYPE_WINSOCK
 
 	int status = 0;
-	cout << "Main thread initiated" << endl;
-	setPriority(QThread::HighestPriority);
 
-	RTPUDPv4TransmissionParams transParams;
-	RTPSessionParams sessParams;
+	sessparams.SetOwnTimestampUnit(1.0 / 44100.0);
+	sessparams.SetAcceptOwnPackets(true);
+	sessparams.SetNeedThreadSafety(true);
+	sessparams.SetUsePollThread(true);
 
-	sessParams.SetOwnTimestampUnit(1.0 / 44100.0);
-	sessParams.SetAcceptOwnPackets(true);
-	sessParams.SetUsePollThread(true);
-	sessParams.SetNeedThreadSafety(true);
+	transparams.SetPortbase(8000);
 
-	transParams.SetPortbase(RTPPort);
-
-	QRTPSession sess;
-	status = sess.Create(sessParams, &transParams);
+	status = sess.Create(sessparams, &transparams);
 	checkError(status);
 
-	uint32_t destIP;
-	string ip = "127.0.0.1";
-	if(inet_pton(AF_INET, ip.c_str(), &(destIP)) != 1)
+	while (sess.IsActive())
 	{
-		exit(-1);
-	}
-
-	status = sess.AddDestination(RTPIPv4Address(ntohl(destIP), RTPPort));
-	checkError(status);
-
-	sess.BeginDataAccess();
-
-	while(sess.IsActive())
-	{
-		if(sess.GotoFirstSourceWithData())
-		{
-			do {
-				RTPPacket* pack = NULL;
-
-				while((pack = sess.GetNextPacket()) != NULL)
-				{
-					cout << "Damn";
-				}
-			} while(sess.GotoNextSourceWithData());
-		}
+		RTPTime::Wait(RTPTime(0, 10000));
 	}
 }
 
@@ -77,4 +49,7 @@ void RTPNetworking::checkError(int err)
 
 RTPNetworking::~RTPNetworking()
 {
+	#ifdef RTP_SOCKETTYPE_WINSOCK
+		WSACleanup();
+	#endif // RTP_SOCKETTYPE_WINSOCK
 }
