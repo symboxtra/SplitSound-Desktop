@@ -30,7 +30,6 @@ install:
             brew update
             brew install qt
             brew install lcov
-            brew install boost
             export PATH=/usr/local/opt/qt/bin:${PATH}
         fi
     - |
@@ -56,8 +55,6 @@ install:
 
             qmake -v
             echo "Installed Qt ${qt_version}"
-
-            sudo apt install libboost-all-dev
         fi
 
 before_script:

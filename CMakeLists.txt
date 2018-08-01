@@ -129,46 +129,6 @@ set (SS_LIBRARIES ${SS_LIBRARIES} ${JTHREAD_LIB} ${JRTPLIB_LIB})
 
 
 
-
-######## Boost ########
-
-set (Boost_USE_MULTITHREADED ON)
-set (Boost_USE_STATIC_LIBS ON)
-set (Boost_USE_STATIC_RUNTIME OFF)
-
-if (WIN32 AND NOT DEFINED BOOST_ROOT)
-    if (DEFINED ENV{BOOST_ROOT})
-        set (BOOST_ROOT $ENV{BOOST_ROOT} CACHE STRING "Path to Boost Installation")
-    else ()
-        message (FATAL_ERROR "BOOST_ROOT environment variable not set. Add the environment variable in Windows Environment Variables or cmake with -DBOOST_ROOT=C:\\path\\to\\boost")
-    endif ()
-endif ()
-
-message (STATUS "BOOST_ROOT: " ${BOOST_ROOT} "\n")
-
-if (WIN32 AND NOT DEFINED BOOST_LIBRARYDIR)
-    if(64BIT)
-        set (BOOST_LIBRARYDIR "${BOOST_ROOT}\\lib64-msvc-14.1")
-    else ()
-        set (BOOST_LIBRARYDIR "${BOOST_ROOT}\\lib32-msvc-14.1")
-    endif ()
-    message (STATUS "Boost Lib Dir: ${BOOST_LIBRARYDIR}")
-endif ()
-
-# Required Boost packages
-find_package (Boost REQUIRED COMPONENTS
-    system
-    filesystem
-    thread
-    date_time
-)
-
-include_directories (${Boost_INCLUDE_DIRS})
-set (SS_LIBRARIES ${SS_LIBRARIES} ${Boost_LIBRARIES})
-
-
-
-
 ######## Qt ########
 
 # Prime for Qt
