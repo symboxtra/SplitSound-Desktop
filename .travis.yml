@@ -83,6 +83,6 @@ after_success:
     - ./send.sh success $WEBHOOK_URL # Webhook to Discord
 
 after_failure:
-    - curl -X PUT -d status=failing http://pi.symboxtra.dynu.net/status/builds/desktop-${BRANCH_NAME} || true
+    - curl -X PUT -d status=failing http://pi.symboxtra.dynu.net/status/builds/desktop-${BRANCH_NAME}
     - curl https://raw.githubusercontent.com/symboxtra/travis-ci-discord-webhook/master/send.sh > send.sh && chmod +x send.sh
     - ./send.sh failure $WEBHOOK_URL # Webhook to Discord
